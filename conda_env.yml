@@ -1,4 +1,4 @@
-name: lama
+name: diffir
 channels:
   - defaults
   - conda-forge

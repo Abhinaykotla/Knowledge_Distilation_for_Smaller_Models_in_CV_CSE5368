@@ -1,117 +1,169 @@
-# DiffIR: Efficient diffusion model for image restoration (ICCV2023)
+## Training
 
-[Paper](https://arxiv.org/pdf/2303.09472.pdf) | [Project Page](https://github.com/Zj-BinXia/DiffIR) | [pretrained models](https://drive.google.com/drive/folders/10miVILiopE414GyaSZM3EFAZITeY9q0p?usp=sharing)
+This code is based on [LaMa](https://github.com/advimman/lama)
 
-#### News
-- **Dec 19, 2023:**  We propose reference-based DiffIR (DiffRIR) to alleviate texture, brightness, and contrast disparities between generated and preserved regions during image editing, such as inpainting and outpainting. All training and inference codes and pre-trained models (x1, x2, x4) are released at [Github](https://github.com/Zj-BinXia/DiffRIR)
-- **Sep 10, 2023:** For real-world SR, we release x1 and x2 pre-trained models.
-- **Sep 6, 2023:** For real-world SR and SRGAN, we can test [LR images without GT images](DiffIR-RealSR/options/test_DiffIRS2_GAN_x4.yml) and [inference](DiffIR-RealSR/inference_diffir.py). 
-- **August 31, 2023:** For real-world SR and SRGAN tasks, we updated 2x SR training files. 
-- **August 28, 2023:** For real-world SR tasks, we released the pretrained models [RealworldSR-DiffIRS2-GANV2](https://drive.google.com/drive/folders/1H4DU-9fB15fSz-OFko00HlWYbNSqmAKq?usp=sharing) and [training files](DiffIR-RealSR/options/train_DiffIRS2_GAN_x4_V2.yml) that are more focused on perception rather than the distortion， which can be used to super-resolve AIGC generated images. 
-- **July 20, 2023:** Training&Testing codes and pre-trained models are released!
+###  1. Prepare training and testing data
 
-<hr />
+**Places dataset** 
 
+```
+# Download data from http://places2.csail.mit.edu/download.html
+# Places365-Standard: Train(105GB)/Test(19GB)/Val(2.1GB) from High-resolution images section
+wget http://data.csail.mit.edu/places/places365/train_large_places365standard.tar
+wget http://data.csail.mit.edu/places/places365/val_large.tar
+wget http://data.csail.mit.edu/places/places365/test_large.tar
 
-> **Abstract:** *Diffusion model (DM) has achieved SOTA performance by modeling the image synthesis process into a sequential application of a denoising network. However, different from image synthesis, image restoration (IR) has a strong constraint to generate results in accordance with ground-truth. Thus, for IR, traditional DMs running massive iterations on a large model to estimate whole images or feature maps is inefficient. To address this issue, we propose an efficient DM for IR (DiffIR), which consists of a compact IR prior extraction network (CPEN), dynamic IR transformer (DIRformer), and denoising network. Specifically, DiffIR has two training stages: pretraining and training DM. In pretraining, we input ground-truth images into CPEN$_{S1}$ to capture a compact IR prior representation (IPR) to guide DIRformer. In the second stage, we train the DM to directly estimate the same IRP as pretrained CPEN$_{S1}$ only using LQ images. We observe that since the IPR is only a compact vector,  DiffIR can use fewer iterations than traditional DM to obtain accurate estimations and generate more stable and realistic results. Since the iterations are few, our DiffIR can adopt a joint optimization of CPEN$_{S2}$, DIRformer, and denoising network, which can further reduce the estimation error influence. We conduct extensive experiments on several IR tasks and achieve SOTA performance while consuming less computational costs.* 
->
+# Unpack train/test/val data and create .yaml config for it
+bash fetch_data/places_standard_train_prepare.sh
+bash fetch_data/places_standard_test_val_prepare.sh
 
-<p align="center">
-  <img width="800" src="figs/method.jpg">
-</p>
-
----
-
-## Installation
-
-For inpainting, see [pip.sh](DiffIR-inpainting/pip.sh) for the installation of dependencies required to run DiffIR.
-
-For GAN based single-image super-resolution, see [pip.sh](DiffIR-SRGAN/pip.sh) for the installation of dependencies required to run DiffIR.
-
-For real-world super-resolution, see [pip.sh](DiffIR-RealSR/pip.sh) for the installation of dependencies required to run DiffIR.
-
-For motion deblurring, see [pip.sh](DiffIR-demotionblur/pip.sh) for the installation of dependencies required to run DiffIR.
+# Sample images for test and viz at the end of epoch
+bash fetch_data/places_standard_test_val_sample.sh
+bash fetch_data/places_standard_test_val_gen_masks.sh
 
 
+# To evaluate trained model and report metrics as in our paper
+# we need to sample previously unseen 30k images and generate masks for them
+bash fetch_data/places_standard_evaluation_prepare_data.sh
 
-## Training and Evaluation
+```
 
-Training and Testing instructions for Inpainting, GAN based single-image super-resolution, real-world super-resolution, and motion deblurring are provided in their respective directories. Here is a summary table containing hyperlinks for easy navigation:
+**CelebA dataset** 
 
-<table>
-  <tr>
-    <th align="left">Task</th>
-    <th align="center">Training Instructions</th>
-    <th align="center">Testing Instructions</th>
-    <th align="center">DiffIR's Pretrained Models</th>
-  </tr>
-  <tr>
-    <td align="left">Inpainting</td>
-    <td align="center"><a href="DiffIR-inpainting/README.md#training">Link</a></td>
-    <td align="center"><a href="DiffIR-inpainting/README.md#evaluation">Link</a></td>
-    <td align="center"><a href="https://drive.google.com/drive/folders/1RQXRWMqVaAsyyQt8T-3KtpS68ef8dh90?usp=drive_link">Download</a></td>
-  </tr>
-  <tr>
-    <td>GAN based single-image super-resolution</td>
-    <td align="center"><a href="DiffIR-SRGAN/README.md#training">Link</a></td>
-    <td align="center"><a href="DiffIR-SRGAN/README.md#evaluation">Link</a></td>
-    <td align="center"><a href="https://drive.google.com/drive/folders/1Mmhz6Sx9tz-n3QJAd6w-UlxdugTEH2fV?usp=drive_link">Download</a></td>
-  </tr>
-  <tr>
-    <td>Real-world super-resolution</td>
-    <td align="center"><a href="DiffIR-RealSR/README.md#training">Link</a></td>
-    <td align="center"><a href="DiffIR-RealSR/README.md#evaluation">Link</a></td>
-    <td align="center"><a href="https://drive.google.com/drive/folders/1G3Ep0xd-uBpIXGZFdWzH1uVCOpJaqkOF?usp=drive_link">Download</a></td>
-  </tr>
-  <tr>
-    <td>Motion deblurring</td>
-    <td align="center"><a href="DiffIR-demotionblur/README.md#training">Link</a></td>
-    <td align="center"><a href="DiffIR-demotionblur/README.md#evaluation">Link</a></td>
-    <td align="center"><a href="https://drive.google.com/drive/folders/1JWYaP9VVPX_Mh2w1Vezn74hck-oWSyMh?usp=drive_link">Download</a></td>
-  </tr>
-</table>
+```
+# Make shure you are in lama folder
+cd lama
+export TORCH_HOME=$(pwd) && export PYTHONPATH=$(pwd)
 
-## Results
-Experiments are performed for different image processing tasks including, inpainting, GAN-based single-image super-resolution, real-world super-resolution, and motion deblurring. 
+# Download CelebA-HQ dataset
+# Download data256x256.zip from https://drive.google.com/drive/folders/11Vz0fqHS2rXDb5pprgTjpD7S2BAJhi1P or https://drive.google.com/file/d/1foD5VnGxBJOg8N__OesoDuYY4DyUL-xE/view?usp=drive_link
 
-<details>
-<summary><strong>Inpainting</strong> (click to expand) </summary>
-<img src = "figs/inpainting-quan.jpg"> 
-<img src = "figs/inpainting-qual.jpg"> 
-</details>
+# unzip & split into train/test/visualization & create config for it
+bash fetch_data/celebahq_dataset_prepare.sh
 
-<details>
-<summary><strong>GAN-based single-image super-resolution</strong> (click to expand) </summary>
-<img src = "figs/SISR-quan.jpg">  
-<img src = "figs/SISR-qual.jpg">
-</details>
+# generate masks for test and visual_test at the end of epoch
+bash fetch_data/celebahq_gen_masks.sh
 
-<details>
-<summary><strong>Real-world super-resolution</strong> (click to expand) </summary>
-  
-<img src = "figs/realworldsr-quan.jpg">
-<img src = "figs/realworldsr-qual.jpg">
-</details>
+```
 
-<details>
-<summary><strong>Motion deblurring</strong> (click to expand) </summary>
-  
-<img src = "figs/deblur-quan.jpg">
-<img src = "figs/deblur-qual.jpg">
-</details>
+###  2. training
 
-## Citation
-If you use DiffIR, please consider citing:
+**2.1 Train on CelebA dataset** 
 
-    @article{xia2023diffir,
-      title={Diffir: Efficient diffusion model for image restoration},
-      author={Xia, Bin and Zhang, Yulun and Wang, Shiyin and Wang, Yitong and Wu, Xinglong and Tian, Yapeng and Yang, Wenming and Van Gool, Luc},
-      journal={ICCV},
-      year={2023}
-    }
+train DiffIR_s1
+
+```
+sh train_celebahqS1.sh
+```
+
+train DiffIR_s2
+
+```
+# convert pretrained model of DiffIR_s1
+# modify the "path" item in S1forS2.py to the path of the checkpoint of DiffIR_S1 and obtain celeba-S1.pth
+
+python3 S1forS2.py 
+```
+```
+#set the "generatorS2_path" and "generatorS1_path" items of configs/training/DiffIRS2-celeba.yaml to the path of celeba-S1.pth
+
+sh train_celebahqS2.sh
+```
+
+**2.2 Train on Place2-standard dataset** 
+
+train DiffIR_s1
+
+```
+sh train_place256S1.sh
+```
+
+train DiffIR_s2
+
+```
+# convert pretrained model of DiffIR_s1
+# modify the "path" item in S1forS2.py to the path of the checkpoint of DiffIR_S1 and obtain place-S1.pth
+
+python3 S1forS2.py 
+```
+```
+#set the "generatorS2_path" and "generatorS1_path" items of configs/training/DiffIRS2-place2.yaml to the path of place-S1.pth
+
+sh train_place256S2.sh
+```
+
+**2.3 Train on Place2-Challenge dataset** 
+
+train DiffIR_s1
+
+```
+sh train_place256_bigLdataS1.sh
+```
+
+train DiffIR_s2
+
+```
+# convert pretrained model of DiffIR_s1
+# modify the "path" item in S1forS2.py to the path of the checkpoint of DiffIR_S1 and obtain placebigdata-S1.pth
+
+python3 S1forS2.py 
+```
+```
+#set the "generatorS2_path" and "generatorS1_path" items of configs/training/DiffIRbigdataS2-place2.yaml to the path of placebigdata-S1.pth
+
+sh train_place256_bigLdataS2.sh
+```
 
 
-## Contact
-Should you have any question, please contact zjbinxia@gmail.com
+**Note:** The above training script uses 8 GPUs by default. To use any other number of GPUs, modify datasets path in configs/training
+/location
+
+## Evaluation
+
+Download the pre-trained [model](https://drive.google.com/drive/folders/1RQXRWMqVaAsyyQt8T-3KtpS68ef8dh90?usp=drive_link) and place it in `./experiments/`
+
+#### Testing on CelebA dataset
+
+- Testing
+```
+sh test_celeba_256_thick.sh
+```
+
+- Calculating metric
+```
+sh eval_celeba_256_thick.sh
+```
+
+#### Testing on Place2-standard dataset
+
+
+- Testing
+```
+sh test_place2_512_thick.sh
+```
+
+- Calculating metric
+```
+sh eval_place2_512_thick.sh
+```
+
+#### Testing on Place2-Challenge dataset
+
+
+- Testing
+```
+sh test_place2_512_thick_big.sh
+```
+
+- Calculating metric
+```
+sh eval_place2_512_thick_big.sh
+```
+
+
+
+
+
+
 
 
