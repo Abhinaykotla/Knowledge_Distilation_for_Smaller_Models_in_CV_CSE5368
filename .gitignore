@@ -7,4 +7,9 @@
 *.bbl
 *.blg
 
+*.out
+*.acn
+*.glo
+*.ist
+
 final-paper.pdf

@@ -14,6 +14,13 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+\usepackage{hyperref}
+\usepackage[acronym]{glossaries}
+
+\makeglossaries
+
+\newacronym{fid}{FID}{Fréchet Inception Distance}
+
 \newcommand{\WP}[1]{\textcolor{red}{(Wonjun: #1)}}
 
 \begin{document}
@@ -40,6 +47,7 @@ Arlington, TX, USA \\
     In this paper, TinyDiff, a quantized and distilled version of the diffusion model, is proposed to address this issue.
     The model is significantly small in terms of the number of parameters and the size, preserving the competitive performance.
     With this model, we expect that users with low computational devices are able to take advantages of both the diffusion model and the edge devices.
+    The code is available at \href{https://github.com}{here}.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -57,5 +65,7 @@ Arlington, TX, USA \\
 \input{conclusion}
 
 \bibliography{final-paper}
+
+\printglossary[type=\acronymtype]
 
 \end{document}
