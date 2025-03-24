@@ -13,39 +13,37 @@
 \usepackage{xcolor}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+\newcommand{\WP}[1]{\textcolor{red}{(Wonjun: #1)}}
+
 \begin{document}
 
-\title{Neural Networks}
+\title{TinyDiff: A Personalized Image Inpainting Models \\
+{\footnotesize \WP{we might need a better title}}
+}
 
-\author{\IEEEauthorblockN{Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\author{
+\IEEEauthorblockN{Wonjun Park\textsuperscript{*}, Abhinay Kotla\textsuperscript{*}}\thanks{* Equal Contribution}
+\IEEEauthorblockA{\textit{Computer Science and Engineering} \\
+\textit{University of Texas at Arlington} \\
+Arlington, TX, USA \\
+\{ wxp7177, axk5827 \}@mavs.uta.edu}
 }
 
 \maketitle
 
 \begin{abstract}
-This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
-or Math in Paper Title or Abstract.
+    Diffusion Models have been successfully shown their capabilities to restore images from masked regions.
+    Nevertheless, due to the scale of their sizes and parameters,
+    leveraging those models in low computational devices like smartphones is still a challenge
+    despite its advantages in terms of privacy and security.
+    In this paper, TinyDiff, a quantized and distilled version of the diffusion model, is proposed to address this issue.
+    The model is significantly small in terms of the number of parameters and the size, preserving the competitive performance.
+    With this model, we expect that users with low computational devices are able to take advantages of both the diffusion model and the edge devices.
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert.
+    image generation, diffusion models, knowledge distillation, teacher-student learning, quantization.
 \end{IEEEkeywords}
 
 \input{introduction}
