@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!python
 
 # Example command:
-# ./bin/predict.py \
+# ./bin/train-knowledge_dilation.py \
 #       model.path=<path to checkpoint, prepared by make_checkpoint.py> \
 #       indir=<path to input data> \
 #       outdir=<where to store predicts>
@@ -56,7 +56,7 @@ def main(predict_config: OmegaConf):
             predict_config.model.path, "models", predict_config.model.checkpoint
         )
         model = load_checkpoint(
-            train_config, checkpoint_path, strict=False, map_location="cuda"
+            train_config, checkpoint_path, strict=False, map_location="cpu"
         )
         model.freeze()
         if not predict_config.get("refine", False):
@@ -65,20 +65,17 @@ def main(predict_config: OmegaConf):
         if not predict_config.indir.endswith("/"):
             predict_config.indir += "/"
 
-        predict_config.indir = (
-            "/mnt/HDD/py_dev/graduate/Spring-2025/DiffIR/places_standard_dataset"
-        )
-        predict_config.outdir = (
-            "/mnt/HDD/py_dev/graduate/Spring-2025/DiffIR/places_standard_dataset/output"
-        )
         dataset = make_default_val_dataset(
             predict_config.indir, **predict_config.dataset
         )
-        os.makedirs(predict_config.outdir, exist_ok=True)
         for img_i in tqdm.trange(len(dataset)):
             mask_fname = dataset.mask_filenames[img_i]
+            cur_out_fname = os.path.join(
+                predict_config.outdir,
+                os.path.splitext(mask_fname[len(predict_config.indir) :])[0] + out_ext,
+            )
+            os.makedirs(os.path.dirname(cur_out_fname), exist_ok=True)
             batch = default_collate([dataset[img_i]])
-            cur_file = os.path.join(predict_config.outdir, mask_fname.split("/")[-1])
             if predict_config.get("refine", False):
                 assert (
                     "unpad_to_size" in batch
@@ -106,7 +103,7 @@ def main(predict_config: OmegaConf):
 
             cur_res = np.clip(cur_res * 255, 0, 255).astype("uint8")
             cur_res = cv2.cvtColor(cur_res, cv2.COLOR_RGB2BGR)
-            cv2.imwrite(cur_file, cur_res)
+            cv2.imwrite(cur_out_fname, cur_res)
 
     except KeyboardInterrupt:
         LOGGER.warning("Interrupted by user")

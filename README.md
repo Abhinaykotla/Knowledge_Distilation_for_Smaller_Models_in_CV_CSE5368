@@ -1,10 +1,22 @@
+# Final Project
+
+## Prerequisites
+
+``` bash
+$ conda env create -f conda_env.yml
+$ pip install -r requirements.txt
+$ conda install pytorch==1.10.1 torchvision==0.11.2 torchaudio==0.10.1 cudatoolkit=10.2 -c pytorch
+```
+
+Below description is from DiffIR README.
+
 ## Training
 
 This code is based on [LaMa](https://github.com/advimman/lama)
 
 ###  1. Prepare training and testing data
 
-**Places dataset** 
+**Places dataset**
 
 ```
 # Download data from http://places2.csail.mit.edu/download.html
@@ -28,7 +40,7 @@ bash fetch_data/places_standard_evaluation_prepare_data.sh
 
 ```
 
-**CelebA dataset** 
+**CelebA dataset**
 
 ```
 # Make shure you are in lama folder
@@ -48,7 +60,7 @@ bash fetch_data/celebahq_gen_masks.sh
 
 ###  2. training
 
-**2.1 Train on CelebA dataset** 
+**2.1 Train on CelebA dataset**
 
 train DiffIR_s1
 
@@ -62,7 +74,7 @@ train DiffIR_s2
 # convert pretrained model of DiffIR_s1
 # modify the "path" item in S1forS2.py to the path of the checkpoint of DiffIR_S1 and obtain celeba-S1.pth
 
-python3 S1forS2.py 
+python3 S1forS2.py
 ```
 ```
 #set the "generatorS2_path" and "generatorS1_path" items of configs/training/DiffIRS2-celeba.yaml to the path of celeba-S1.pth
@@ -70,7 +82,7 @@ python3 S1forS2.py
 sh train_celebahqS2.sh
 ```
 
-**2.2 Train on Place2-standard dataset** 
+**2.2 Train on Place2-standard dataset**
 
 train DiffIR_s1
 
@@ -84,7 +96,7 @@ train DiffIR_s2
 # convert pretrained model of DiffIR_s1
 # modify the "path" item in S1forS2.py to the path of the checkpoint of DiffIR_S1 and obtain place-S1.pth
 
-python3 S1forS2.py 
+python3 S1forS2.py
 ```
 ```
 #set the "generatorS2_path" and "generatorS1_path" items of configs/training/DiffIRS2-place2.yaml to the path of place-S1.pth
@@ -92,7 +104,7 @@ python3 S1forS2.py
 sh train_place256S2.sh
 ```
 
-**2.3 Train on Place2-Challenge dataset** 
+**2.3 Train on Place2-Challenge dataset**
 
 train DiffIR_s1
 
@@ -106,7 +118,7 @@ train DiffIR_s2
 # convert pretrained model of DiffIR_s1
 # modify the "path" item in S1forS2.py to the path of the checkpoint of DiffIR_S1 and obtain placebigdata-S1.pth
 
-python3 S1forS2.py 
+python3 S1forS2.py
 ```
 ```
 #set the "generatorS2_path" and "generatorS1_path" items of configs/training/DiffIRbigdataS2-place2.yaml to the path of placebigdata-S1.pth
@@ -159,11 +171,3 @@ sh test_place2_512_thick_big.sh
 ```
 sh eval_place2_512_thick_big.sh
 ```
-
-
-
-
-
-
-
-

@@ -2,4 +2,13 @@
 data_root_dir: /mnt/bn/xiabinpaint/dataset/inpainting/place2/
 out_root_dir: experiments/
 tb_dir: tb_logs/
-pretrained_models: 
+pretrained_models: # @package _group_
+data_root_dir: /home/dev/storage/graduate/Spring-2025/DiffIR/places_standard_dataset/
+out_root_dir: /home/dev/storage/graduate/Spring-2025/DiffIR/experiments/
+tb_dir: /home/dev/storage/graduate/Spring-2025/DiffIR/tb_logs/
+pretrained_models: /home/dev/storage/graduate/Spring-2025/DiffIR/
+# @package _group_
+data_root_dir: /home/dev/storage/graduate/Spring-2025/DiffIR/places_standard_dataset/
+out_root_dir: /home/dev/storage/graduate/Spring-2025/DiffIR/experiments/
+tb_dir: /home/dev/storage/graduate/Spring-2025/DiffIR/tb_logs/
+pretrained_models: /home/dev/storage/graduate/Spring-2025/DiffIR/
