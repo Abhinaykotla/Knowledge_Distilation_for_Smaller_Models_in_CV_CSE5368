@@ -3,17 +3,20 @@ import torch.nn as nn
 import torch.nn.functional as F
 import pytorch_lightning as pl
 
-class ConvGnSilu(nn.Module):
-    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1):
+# Directly include ConvBlock definition here explicitly
+class ConvBlock(nn.Module):
+    def __init__(self, in_channels, out_channels, use_norm=True):
         super().__init__()
-        self.conv = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size, stride, padding),
-            nn.GroupNorm(32, out_channels),
-            nn.SiLU(inplace=True)
-        )
+        layers = [
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(inplace=True)
+        ]
+        if use_norm:
+            layers.insert(1, nn.BatchNorm2d(out_channels))
+        self.block = nn.Sequential(*layers)
 
     def forward(self, x):
-        return self.conv(x)
+        return self.block(x)
 
 class Encoder(nn.Module):
     def __init__(self, in_channels, base_channels, num_layers):
@@ -21,7 +24,7 @@ class Encoder(nn.Module):
         layers = []
         channels = in_channels
         for i in range(num_layers):
-            layers.append(ConvGnSilu(channels, base_channels * 2 ** i))
+            layers.append(ConvBlock(channels, base_channels * 2 ** i))
             layers.append(nn.MaxPool2d(kernel_size=2))
             channels = base_channels * 2 ** i
         self.encoder = nn.Sequential(*layers)
@@ -36,7 +39,7 @@ class Decoder(nn.Module):
         channels = base_channels * 2 ** (num_layers - 1)
         for i in range(num_layers - 1, -1, -1):
             layers.append(nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True))
-            layers.append(ConvGnSilu(channels, base_channels * 2 ** i))
+            layers.append(ConvBlock(channels, base_channels * 2 ** i))
             channels = base_channels * 2 ** i
         layers.append(nn.Conv2d(channels, out_channels, kernel_size=3, stride=1, padding=1))
         self.decoder = nn.Sequential(*layers)

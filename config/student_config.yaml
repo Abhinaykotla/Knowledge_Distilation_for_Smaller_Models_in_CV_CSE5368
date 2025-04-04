@@ -1,0 +1,28 @@
+model:
+  in_channels: 4
+  out_channels: 3
+  base_channels: 32
+  num_layers: 3
+
+data:
+  dataset:
+    root: "datasets/celeba-hq"
+    train_source: "train_source.flist"
+    train_mask: "train_mask.flist"
+    val_source: "val_source.flist"
+    val_mask: "val_mask.flist"
+    batch_size: 16
+
+trainer:
+  gpus: 1
+  max_epochs: 100
+  precision: 32
+  log_every_n_steps: 50
+  val_check_interval: 0.25
+
+losses:
+  l1_loss_weight: 1.0
+  perceptual_loss_weight: 0.1
+  style_loss_weight: 250
+  adversarial_loss_weight: 0.01
+  feature_matching_loss_weight: 10.0

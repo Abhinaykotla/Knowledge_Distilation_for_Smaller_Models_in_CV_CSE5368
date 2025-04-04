@@ -3,7 +3,7 @@ import torch
 from student_arch import StudentInpaintNet
 from archs.S2_arch import DiffIRS2
 from torch.utils.data import DataLoader
-from saicinpainting.training.data.datasets import InpaintingDataset
+from saicinpainting.evaluation.data import OurInpaintingDataset as InpaintingDataset
 import yaml
 
 def load_yaml(config_path):
@@ -14,8 +14,6 @@ config = load_yaml('config/student_config.yaml')
 
 train_dataset = InpaintingDataset(
     datadir=config['data']['dataset']['root'],
-    img_suffix='.jpg',
-    mask_suffix='.png',
     img_flist=config['data']['dataset']['train_source'],
     mask_flist=config['data']['dataset']['train_mask'],
     training=True
@@ -23,8 +21,6 @@ train_dataset = InpaintingDataset(
 
 val_dataset = InpaintingDataset(
     datadir=config['data']['dataset']['root'],
-    img_suffix='.jpg',
-    mask_suffix='.png',
     img_flist=config['data']['dataset']['val_source'],
     mask_flist=config['data']['dataset']['val_mask'],
     training=False
@@ -49,8 +45,7 @@ for p in teacher_model.parameters():
     p.requires_grad = False
 
 trainer = pl.Trainer(
-    accelerator='gpu',
-    devices=config['trainer']['gpus'],
+    gpus=config['trainer']['gpus'],
     max_epochs=config['trainer']['max_epochs'],
     precision=config['trainer']['precision'],
     log_every_n_steps=config['trainer']['log_every_n_steps'],
