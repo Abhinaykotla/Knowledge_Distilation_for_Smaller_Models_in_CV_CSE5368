@@ -7,10 +7,10 @@ model:
 data:
   dataset:
     root: "datasets/celeba-hq"
-    train_source: "train_source.flist"
-    train_mask: "train_mask.flist"
-    val_source: "val_source.flist"
-    val_mask: "val_mask.flist"
+    train_source: "train_images.flist"
+    train_mask: "train_masks.flist"
+    val_source: "val_images.flist"
+    val_mask: "val_masks.flist"
     batch_size: 16
 
 trainer:
