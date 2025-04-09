@@ -16,12 +16,12 @@ losses:
 model:
   base_channels: 32
   in_channels: 4
-  num_layers: 4
+  num_layers: 2
   out_channels: 3
 trainer:
-  default_root_dir: student_checkpoints\layers_4
+  default_root_dir: student_checkpoints\layers_2
   gpus: 1
   log_every_n_steps: 50
   max_epochs: 100
-  precision: 32
-  val_check_interval: 0.25
+  precision: 16
+  val_check_interval: 1
