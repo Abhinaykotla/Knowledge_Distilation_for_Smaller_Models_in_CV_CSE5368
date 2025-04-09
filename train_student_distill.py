@@ -104,14 +104,15 @@ for p in teacher_model.parameters():
 # Assign teacher
 student_model.teacher = teacher_model
 
-# Trainer
-trainer = pl.Trainer(
-    gpus=config['trainer']['gpus'],
-    max_epochs=config['trainer']['max_epochs'],
-    precision=config['trainer']['precision'],
-    log_every_n_steps=config['trainer']['log_every_n_steps'],
-    val_check_interval=config['trainer']['val_check_interval'],
-    default_root_dir='student_checkpoints'
-)
+if __name__ == '__main__':
+    # Trainer
+    trainer = pl.Trainer(
+        gpus=config['trainer']['gpus'],
+        max_epochs=config['trainer']['max_epochs'],
+        precision=config['trainer']['precision'],
+        log_every_n_steps=config['trainer']['log_every_n_steps'],
+        val_check_interval=config['trainer']['val_check_interval'],
+        default_root_dir='student_checkpoints'
+    )
 
-trainer.fit(student_model, train_loader, val_loader)
+    trainer.fit(student_model, train_loader, val_loader)

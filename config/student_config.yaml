@@ -1,28 +1,27 @@
-model:
-  in_channels: 4
-  out_channels: 3
-  base_channels: 32
-  num_layers: 3
-
 data:
   dataset:
-    root: "datasets/celeba-hq"
-    train_source: "train_images.flist"
-    train_mask: "train_masks.flist"
-    val_source: "val_images.flist"
-    val_mask: "val_masks.flist"
-    batch_size: 16
-
-trainer:
-  gpus: 1
-  max_epochs: 100
-  precision: 32
-  log_every_n_steps: 50
-  val_check_interval: 0.25
-
+    batch_size: 64
+    num_workers: 8
+    root: datasets/celeba-hq
+    train_mask: train_masks.flist
+    train_source: train_images.flist
+    val_mask: val_masks.flist
+    val_source: val_images.flist
 losses:
+  adversarial_loss_weight: 0.01
+  feature_matching_loss_weight: 10.0
   l1_loss_weight: 1.0
   perceptual_loss_weight: 0.1
   style_loss_weight: 250
-  adversarial_loss_weight: 0.01
-  feature_matching_loss_weight: 10.0
+model:
+  base_channels: 32
+  in_channels: 4
+  num_layers: 4
+  out_channels: 3
+trainer:
+  default_root_dir: student_checkpoints\layers_4
+  gpus: 1
+  log_every_n_steps: 50
+  max_epochs: 100
+  precision: 32
+  val_check_interval: 0.25
