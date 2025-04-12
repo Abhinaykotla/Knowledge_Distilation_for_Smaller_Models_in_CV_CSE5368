@@ -7,7 +7,7 @@ import torch
 CONFIG_PATH = 'config/student_config.yaml'
 CHECKPOINT_BASE = 'student_checkpoints'
 TRAIN_SCRIPT = 'train_student_distill.py'
-LAYERS_TO_TEST = [4, 5, 6]
+LAYERS_TO_TEST = [10, 14, 18]
 
 
 def update_config(num_layers):

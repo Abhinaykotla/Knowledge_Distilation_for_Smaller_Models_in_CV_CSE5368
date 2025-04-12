@@ -110,3 +110,9 @@ class StudentInpaintNet(pl.LightningModule):
         df = pd.DataFrame(self.val_losses, columns=["val_loss"])
         df.to_csv(os.path.join(log_dir, f"val_loss_epoch{self.current_epoch}.csv"), index=False)
         self.val_losses = []
+
+    def set_teacher(self, teacher_model):
+        self.teacher = teacher_model
+        self.teacher.eval()
+        for p in self.teacher.parameters():
+            p.requires_grad = False

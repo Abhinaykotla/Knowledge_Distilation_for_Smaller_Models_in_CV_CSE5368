@@ -1,7 +1,7 @@
 data:
   dataset:
     batch_size: 64
-    num_workers: 8
+    num_workers: 4
     root: datasets/celeba-hq
     train_mask: train_masks.flist
     train_source: train_images.flist
@@ -14,12 +14,12 @@ losses:
   perceptual_loss_weight: 0.1
   style_loss_weight: 250
 model:
-  base_channels: 32
+  base_channels: 16
   in_channels: 4
-  num_layers: 2
+  num_layers: 14
   out_channels: 3
 trainer:
-  default_root_dir: student_checkpoints\layers_2
+  default_root_dir: student_checkpoints\layers_14
   gpus: 1
   log_every_n_steps: 50
   max_epochs: 100

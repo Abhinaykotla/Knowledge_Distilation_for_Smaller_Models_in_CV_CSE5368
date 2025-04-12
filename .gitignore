@@ -10,3 +10,4 @@ places_standard_dataset/
 *.png
 *.jpeg
 *.ckpt
+student_checkpoints/

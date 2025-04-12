@@ -7,6 +7,7 @@ from student_arch import StudentInpaintNet
 from archs.S2_arch import DiffIRS2
 import cv2
 import numpy as np
+from torchinfo import summary
 
 
 class StudentInpaintingDataset(Dataset):
@@ -96,7 +97,20 @@ def main():
     for p in teacher_model.parameters():
         p.requires_grad = False
 
-    student_model.teacher = teacher_model
+    # Attach externally
+    student_model.set_teacher(teacher_model)
+
+    print(f"Number of layers in student model: {config['model']['num_layers']}")
+    summary(student_model, input_size=(config['data']['dataset']['batch_size'], config['model']['in_channels'], 256, 256))
+
+    # Param counts (only encoder + decoder)
+    student_total_params = sum(p.numel() for name, p in student_model.named_parameters() if 'teacher' not in name)
+    student_trainable_params = sum(p.numel() for name, p in student_model.named_parameters() if p.requires_grad and 'teacher' not in name)
+    teacher_total_params = sum(p.numel() for p in teacher_model.parameters())
+
+    print(f"📦 Total Student Params (excluding teacher): {student_total_params:,}")
+    print(f"✅ Trainable Student Params: {student_trainable_params:,}")
+    print(f"🧠 Teacher Params (frozen): {teacher_total_params:,}")
 
     trainer = pl.Trainer(
         gpus=config['trainer']['gpus'],
