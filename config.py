@@ -12,7 +12,7 @@ class Config:
     BATCH_SIZE = 128
     NUM_WORKERS = 12
     LEARNING_RATE = 0.001
-    MAX_EPOCHS = 2
+    MAX_EPOCHS = 15
     PATIENCE = 3
     USE_MIXED_PRECISION = True
     
