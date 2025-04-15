@@ -13,13 +13,19 @@ def train_with_teacher(student, teacher, train_loader, optimizer, criterion, dev
 
     for data, target in train_loader:
         data, target = data.to(device), target.to(device)
+        
+        # Ensure data matches teacher model's dtype for forward pass
+        teacher_data = data
+        if next(teacher.parameters()).dtype != data.dtype:
+            teacher_data = data.to(dtype=next(teacher.parameters()).dtype)
+            
         optimizer.zero_grad()
 
         with torch.no_grad():
-            teacher_logits = teacher(data)
+            teacher_logits = teacher(teacher_data)
 
         if scaler:
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast(device_type='cuda'):
                 student_logits = student(data)
                 ce_loss = criterion(student_logits, target)
                 kd_loss = kd_loss_fn(
@@ -63,7 +69,7 @@ def train(model, train_loader, optimizer, criterion, device, scaler=None):
         optimizer.zero_grad()
 
         if scaler:
-            with torch.cuda.amp.autocast():
+            with torch.amp.autocast(device_type='cuda'):
                 outputs = model(data)
                 loss = criterion(outputs, target)
             scaler.scale(loss).backward()

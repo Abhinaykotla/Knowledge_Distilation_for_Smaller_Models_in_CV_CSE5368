@@ -4,16 +4,17 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from models.blocks import ModularCNN
 from data.dataset import IntelImageDataset
-from utils.train_utils import train, test, train_with_teacher
+from utils.train_utils import train_with_teacher, test
 from config import Config
+from models.teacher_arch import CustomSceneCNN as TeacherCNN
 import os
 import time
-from models.teacher_arch import CustomSceneCNN as TeacherCNN
-
 
 def main():
     config = Config()
     device = torch.device(config.DEVICE)
+
+    print(f"Using device: {device}")
 
     # Dataset
     train_dataset = IntelImageDataset(config.TRAIN_DATASET_PATH, transform=config.train_transform)
@@ -22,7 +23,7 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True, num_workers=config.NUM_WORKERS)
     test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False, num_workers=config.NUM_WORKERS)
 
-    # Model
+    # Student model
     model = ModularCNN(num_residual_blocks=config.RESIDUAL_BLOCKS,
                        num_fc_layers=len(config.FULLY_CONNECTED_LAYERS),
                        num_classes=config.NUM_CLASSES).to(device)
@@ -32,7 +33,22 @@ def main():
     optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
 
     # AMP scaler
-    scaler = torch.cuda.amp.GradScaler() if config.USE_MIXED_PRECISION else None
+    scaler = torch.amp.GradScaler() if config.USE_MIXED_PRECISION else None
+
+    # Load teacher model
+    teacher_model = TeacherCNN().to(device)
+    teacher_model.load_state_dict(torch.load(config.TEACHER_MODEL_PATH, map_location=device))
+    teacher_model.eval()
+    for param in teacher_model.parameters():
+        param.requires_grad = False
+
+    # Match dtype to student model
+    if config.USE_MIXED_PRECISION:
+        teacher_model = teacher_model.to(dtype=torch.float16)
+    elif torch.get_default_dtype() == torch.float64:
+        teacher_model = teacher_model.to(dtype=torch.float64)
+    else:
+        teacher_model = teacher_model.to(dtype=torch.float32)
 
     # History tracking
     history = {
@@ -42,18 +58,8 @@ def main():
         'test_accuracy': []
     }
 
-    # Timer and best accuracy tracking
     start_time = time.time()
     best_test_acc = 0.0
-
-    # Load and freeze the teacher model
-    teacher_model = TeacherCNN().to(device)
-    teacher_model.load_state_dict(torch.load(config.TEACHER_MODEL_PATH, map_location=device))
-    teacher_model.eval()
-
-    for param in teacher_model.parameters():
-        param.requires_grad = False
-
 
     for epoch in range(config.MAX_EPOCHS):
         train_loss, train_accuracy = train_with_teacher(
@@ -75,28 +81,24 @@ def main():
         history['test_loss'].append(test_loss)
         history['test_accuracy'].append(test_accuracy)
 
-        print(f'Epoch {epoch+1}/{config.MAX_EPOCHS}, '
-              f'Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, '
-              f'Test Loss: {test_loss:.4f}, Test Acc: {test_accuracy:.2f}%')
+        print(f"Epoch {epoch+1}/{config.MAX_EPOCHS}, Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Test Loss: {test_loss:.4f}, Test Acc: {test_accuracy:.2f}%")
 
-        # Save best model
         if test_accuracy > best_test_acc:
             best_test_acc = test_accuracy
             best_model_path = config.MODEL_PATH.replace("model.pth", "best_model.pth")
             torch.save(model.state_dict(), best_model_path)
-            print(f"✅ New best model saved at {best_model_path} with {test_accuracy:.2f}% test accuracy.")
+            print(f"\u2705 New best model saved at {best_model_path} with {test_accuracy:.2f}% test accuracy.")
 
-    # Final saving
+    # Final save
     end_time = time.time()
     total_time = end_time - start_time
-
     torch.save(model.state_dict(), config.MODEL_PATH)
     torch.save(history, config.HISTORY_PATH)
 
-    # Log training summary
+    # Training summary
     summary_path = config.MODEL_PATH.replace("model.pth", "training_summary.txt")
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    precision = "FP16 (mixed)" if config.USE_MIXED_PRECISION else "FP32"
+    precision = "FP16 (mixed)" if config.USE_MIXED_PRECISION else ("FP64" if torch.get_default_dtype() == torch.float64 else "FP32")
     gpu_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
 
     with open(summary_path, "w") as f:

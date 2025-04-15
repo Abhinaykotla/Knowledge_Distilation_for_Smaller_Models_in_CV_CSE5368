@@ -11,11 +11,11 @@ class Config:
 
 
     # Hyperparameters
-    BATCH_SIZE = 32
+    BATCH_SIZE = 64
     NUM_WORKERS = 6
     LEARNING_RATE = 0.001
-    MAX_EPOCHS = 15
-    PATIENCE = 3
+    MAX_EPOCHS = 2
+    PATIENCE =2
     USE_MIXED_PRECISION = True
     
     # Model configuration
