@@ -9,3 +9,4 @@ data/intel-image-classification
 *.tar
 *.gz
 checkpoints
+tempCodeRunnerFile.py
