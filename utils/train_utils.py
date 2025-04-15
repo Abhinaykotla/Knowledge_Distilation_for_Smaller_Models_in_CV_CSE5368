@@ -1,22 +1,28 @@
 import torch
 import torch.nn as nn
 
-def train(model, train_loader, optimizer, criterion, device):
+def train(model, train_loader, optimizer, criterion, device, scaler=None):
     model.train()
     running_loss = 0.0
     correct = 0
     total = 0
 
-    for batch_idx, (data, target) in enumerate(train_loader):
+    for data, target in train_loader:
         data, target = data.to(device), target.to(device)
-
         optimizer.zero_grad()
 
-        outputs = model(data)
-        loss = criterion(outputs, target)
-
-        loss.backward()
-        optimizer.step()
+        if scaler:
+            with torch.cuda.amp.autocast():
+                outputs = model(data)
+                loss = criterion(outputs, target)
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
+        else:
+            outputs = model(data)
+            loss = criterion(outputs, target)
+            loss.backward()
+            optimizer.step()
 
         running_loss += loss.item()
         _, predicted = outputs.max(1)
@@ -26,6 +32,7 @@ def train(model, train_loader, optimizer, criterion, device):
     train_loss = running_loss / len(train_loader)
     train_accuracy = 100. * correct / total
     return train_loss, train_accuracy
+
 
 def test(model, test_loader, criterion, device):
     model.eval()
