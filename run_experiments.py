@@ -15,8 +15,8 @@ from train import main as train_main
 def run_experiments():
     experiments = [
         {"res_blocks": 2, "fc_layers": [512]},
-        # {"res_blocks": 4, "fc_layers": [1024, 256]},
-        # {"res_blocks": 6, "fc_layers": [1024, 512, 256]},
+        {"res_blocks": 4, "fc_layers": [1024, 256]},
+        {"res_blocks": 6, "fc_layers": [1024, 512, 256]},
         {"res_blocks": 8, "fc_layers": [1024, 512, 256, 64]},
         {"res_blocks": 10, "fc_layers": [2048, 1024, 512, 256]},
         {"res_blocks": 12, "fc_layers": [2048, 1024, 512, 256, 128]},

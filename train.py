@@ -68,7 +68,7 @@ def main():
             scaler=scaler
         )
 
-        test_loss, test_accuracy, _, _ = test(model, test_loader, criterion, device)
+        test_loss, test_accuracy = test(model, test_loader, criterion, device)
 
         history['train_loss'].append(train_loss)
         history['train_accuracy'].append(train_accuracy)

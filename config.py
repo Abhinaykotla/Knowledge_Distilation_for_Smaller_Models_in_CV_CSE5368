@@ -27,8 +27,8 @@ class Config:
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
     # Paths for saving model and history
-    MODEL_PATH = './intel_scene_cnn_model.pth'
-    HISTORY_PATH = './intel_scene_cnn_history.pth'
+    MODEL_PATH = './test/intel_scene_cnn_model.pth'
+    HISTORY_PATH = './test/intel_scene_cnn_history.pth'
 
     # Dataset transformations
     train_transform = transforms.Compose([
