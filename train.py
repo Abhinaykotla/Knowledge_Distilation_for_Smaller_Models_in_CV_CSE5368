@@ -45,8 +45,6 @@ def main():
     # Match dtype to student model
     if config.USE_MIXED_PRECISION:
         teacher_model = teacher_model.to(dtype=torch.float16)
-    elif torch.get_default_dtype() == torch.float64:
-        teacher_model = teacher_model.to(dtype=torch.float64)
     else:
         teacher_model = teacher_model.to(dtype=torch.float32)
 
@@ -98,7 +96,7 @@ def main():
     # Training summary
     summary_path = config.MODEL_PATH.replace("model.pth", "training_summary.txt")
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    precision = "FP16 (mixed)" if config.USE_MIXED_PRECISION else ("FP64" if torch.get_default_dtype() == torch.float64 else "FP32")
+    precision = "FP16 (mixed)" if config.USE_MIXED_PRECISION else "FP32"
     gpu_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
 
     with open(summary_path, "w") as f:

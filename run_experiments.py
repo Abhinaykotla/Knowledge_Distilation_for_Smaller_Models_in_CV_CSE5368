@@ -21,7 +21,7 @@ def run_experiments():
 #     ]
 
 
-    precisions = ["fp16", "fp32", "fp64"]
+    precisions = ["fp16", "fp32"]
 
     for i, exp in enumerate(experiments, 1):
         for precision in precisions:
@@ -45,9 +45,8 @@ def run_experiments():
             elif precision == "fp32":
                 Config.USE_MIXED_PRECISION = False
                 torch.set_default_dtype(torch.float32)
-            elif precision == "fp64":
-                Config.USE_MIXED_PRECISION = False
-                torch.set_default_dtype(torch.float64)
+            else:
+                raise ValueError("Invalid precision. Choose 'fp16' or 'fp32'.")
 
             # Save config
             with open(os.path.join(experiment_dir, "config.txt"), "w") as f:
