@@ -9,10 +9,10 @@ class Config:
     TEST_DATASET_PATH = os.path.join(DATASET_PATH, 'seg_test', 'seg_test')
 
     # Hyperparameters
-    BATCH_SIZE = 64
-    NUM_WORKERS = 6
+    BATCH_SIZE = 128
+    NUM_WORKERS = 12
     LEARNING_RATE = 0.001
-    MAX_EPOCHS = 20
+    MAX_EPOCHS = 2
     PATIENCE = 3
     USE_MIXED_PRECISION = True
     
