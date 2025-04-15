@@ -58,7 +58,6 @@ def run_experiments():
             
             print(f"\n\U0001f52c Running {experiment_name} → ResBlocks={exp['res_blocks']}, Precision={precision.upper()}")
             
-            # Run in a way that ensures complete reset
             train_main()
             
             # Force complete cleanup after each experiment
