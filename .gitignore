@@ -1,7 +1,6 @@
 *.zip
-
 venv/
-.ipynb_checkpoints/
 *.pth
 data/intel-image-classification
 *.jpg
+*.pyc
