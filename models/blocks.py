@@ -1,8 +1,6 @@
 import torch
 import torch.nn as nn
 
-
-
 class ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super(ResidualBlock, self).__init__()
@@ -21,22 +19,18 @@ class ResidualBlock(nn.Module):
 
     def forward(self, x):
         residual = x
-
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-
         out = self.conv2(out)
         out = self.bn2(out)
-
         out += self.shortcut(residual)
         out = self.relu(out)
-
         return out
 
 
 class ModularCNN(nn.Module):
-    def __init__(self, num_residual_blocks, num_fc_layers, input_channels=3, num_classes=6):
+    def __init__(self, num_residual_blocks, num_fc_layers, input_channels=3, num_classes=6, input_size=(3, 150, 150)):
         super(ModularCNN, self).__init__()
 
         self.conv1 = nn.Conv2d(input_channels, 16, kernel_size=3, stride=1, padding=1, bias=False)
@@ -46,7 +40,13 @@ class ModularCNN(nn.Module):
         self.residual_layers = self._make_residual_layers(num_residual_blocks)
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
-        self.fc_layers = self._make_fc_layers(num_fc_layers, 16 * (2 ** (num_residual_blocks - 1)), num_classes)
+        # Dynamically determine flattened size
+        with torch.no_grad():
+            dummy_input = torch.zeros(1, *input_size)
+            dummy_output = self._forward_features(dummy_input)
+            self.flattened_size = dummy_output.view(1, -1).size(1)
+
+        self.fc_layers = self._make_fc_layers(num_fc_layers, self.flattened_size, num_classes)
 
     def _make_residual_layers(self, num_blocks):
         layers = []
@@ -59,7 +59,7 @@ class ModularCNN(nn.Module):
 
     def _make_fc_layers(self, num_layers, input_dim, output_dim):
         layers = []
-        for i in range(num_layers):
+        for _ in range(num_layers):
             layers.append(nn.Linear(input_dim, input_dim // 2))
             layers.append(nn.ReLU(inplace=True))
             layers.append(nn.BatchNorm1d(input_dim // 2))
@@ -68,10 +68,14 @@ class ModularCNN(nn.Module):
         layers.append(nn.Linear(input_dim, output_dim))
         return nn.Sequential(*layers)
 
-    def forward(self, x):
+    def _forward_features(self, x):
         x = self.relu(self.bn1(self.conv1(x)))
         x = self.residual_layers(x)
         x = self.avgpool(x)
+        return x
+
+    def forward(self, x):
+        x = self._forward_features(x)
         x = x.view(x.size(0), -1)
         x = self.fc_layers(x)
         return x
