@@ -4,10 +4,12 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 from models.blocks import ModularCNN
 from data.dataset import IntelImageDataset
-from utils.train_utils import train, test
+from utils.train_utils import train, test, train_with_teacher
 from config import Config
 import os
 import time
+from models.teacher_arch import CustomSceneCNN as TeacherCNN
+
 
 def main():
     config = Config()
@@ -44,8 +46,28 @@ def main():
     start_time = time.time()
     best_test_acc = 0.0
 
+    # Load and freeze the teacher model
+    teacher_model = TeacherCNN().to(device)
+    teacher_model.load_state_dict(torch.load(config.TEACHER_MODEL_PATH, map_location=device))
+    teacher_model.eval()
+
+    for param in teacher_model.parameters():
+        param.requires_grad = False
+
+
     for epoch in range(config.MAX_EPOCHS):
-        train_loss, train_accuracy = train(model, train_loader, optimizer, criterion, device, scaler)
+        train_loss, train_accuracy = train_with_teacher(
+            student=model,
+            teacher=teacher_model,
+            train_loader=train_loader,
+            optimizer=optimizer,
+            criterion=criterion,
+            device=device,
+            alpha=0.5,
+            temperature=4.0,
+            scaler=scaler
+        )
+
         test_loss, test_accuracy, _, _ = test(model, test_loader, criterion, device)
 
         history['train_loss'].append(train_loss)
