@@ -4,3 +4,7 @@ venv/
 data/intel-image-classification
 *.jpg
 *.pyc
+*.pkl
+*.tar.gz
+*.tar
+*.gz
