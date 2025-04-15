@@ -14,7 +14,8 @@ class Config:
     LEARNING_RATE = 0.001
     MAX_EPOCHS = 20
     PATIENCE = 3
-
+    USE_MIXED_PRECISION = True
+    
     # Model configuration
     NUM_CLASSES = 6
     RESIDUAL_BLOCKS = 8  # Number of residual blocks
