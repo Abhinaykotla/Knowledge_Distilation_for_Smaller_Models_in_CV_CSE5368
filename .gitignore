@@ -8,3 +8,4 @@ data/intel-image-classification
 *.tar.gz
 *.tar
 *.gz
+checkpoints
