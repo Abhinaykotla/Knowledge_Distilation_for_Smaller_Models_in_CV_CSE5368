@@ -11,13 +11,13 @@ class Config:
 
 
     # Hyperparameters
-    BATCH_SIZE = 64
-    NUM_WORKERS = 6
+    BATCH_SIZE = 8
+    NUM_WORKERS = 4
     LEARNING_RATE = 0.001
     MAX_EPOCHS = 2
     PATIENCE =2
     USE_MIXED_PRECISION = True
-    
+
     # Model configuration
     NUM_CLASSES = 6
     RESIDUAL_BLOCKS = 2  # Default number of residual blocks
