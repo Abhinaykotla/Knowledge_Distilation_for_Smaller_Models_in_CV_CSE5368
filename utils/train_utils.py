@@ -12,7 +12,9 @@ def train_with_teacher(student, teacher, train_loader, optimizer, criterion, dev
     kd_loss_fn = nn.KLDivLoss(reduction='batchmean')
 
     for data, target in train_loader:
-        data, target = data.to(device), target.to(device)
+        data = data.to(device=device, dtype=next(student.parameters()).dtype)
+        target = target.to(device)
+
         
         # Ensure data matches teacher model's dtype for forward pass
         teacher_data = data
@@ -99,7 +101,8 @@ def test(model, test_loader, criterion, device):
     with torch.no_grad():
         for data, target in test_loader:
             # Move data and target to the GPU
-            data, target = data.to(device), target.to(device)
+            data = data.to(device=device, dtype=next(model.parameters()).dtype)
+            target = target.to(device)
             outputs = model(data)
             test_loss += criterion(outputs, target).item()
             _, predicted = outputs.max(1)
