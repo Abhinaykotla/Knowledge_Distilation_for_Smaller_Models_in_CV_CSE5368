@@ -28,6 +28,11 @@ def main():
     model = ModularCNN(num_residual_blocks=config.RESIDUAL_BLOCKS,
                        num_fc_layers=len(config.FULLY_CONNECTED_LAYERS),
                        num_classes=config.NUM_CLASSES).to(device)
+    
+    print(model)
+
+    conv_layers = sum(1 for module in model.modules() if isinstance(module, nn.Conv2d))
+    print(f"Number of layers: {conv_layers}")
 
     # Optimizer and loss
     criterion = nn.CrossEntropyLoss()
