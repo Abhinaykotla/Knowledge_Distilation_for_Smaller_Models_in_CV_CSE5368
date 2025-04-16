@@ -9,8 +9,8 @@ def run_experiments():
         # {"res_blocks": 4, "fc_layers": [16, 8]}
 
         {"res_blocks": 14, "fc_layers": [512, 256, 128, 64, 32, 16, 8]},
-        {"res_blocks": 12, "fc_layers": [512, 256, 128, 64, 32, 16]},
-        {"res_blocks": 8,  "fc_layers": [256, 128, 64, 32, 16]}
+        {"res_blocks": 10, "fc_layers": [512, 256, 128, 64, 32, 16]},
+        {"res_blocks": 6,  "fc_layers": [256, 128, 64, 32, 16]}
     ]
 
 # def run_experiments():
