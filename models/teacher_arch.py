@@ -31,8 +31,6 @@ class ResidualBlock(nn.Module):
 
         return out
     
-
-
 class CustomSceneCNN(nn.Module):
     def __init__(self):
         super(CustomSceneCNN, self).__init__()
@@ -41,19 +39,23 @@ class CustomSceneCNN(nn.Module):
         self.bn1 = nn.BatchNorm2d(16)
         self.relu = nn.ReLU(inplace=True)
 
-        # Adding 32 layers of ResidualBlock
-        self.layer1 = self._make_layer(16, 16, num_blocks=4, stride=1)
-        self.layer2 = self._make_layer(16, 32, num_blocks=4, stride=2)
-        self.layer3 = self._make_layer(32, 64, num_blocks=4, stride=2)
-        self.layer4 = self._make_layer(64, 128, num_blocks=4, stride=2)
-        self.layer5 = self._make_layer(128, 256, num_blocks=4, stride=2)
-        self.layer6 = self._make_layer(256, 512, num_blocks=4, stride=2)
-        self.layer7 = self._make_layer(512, 1024, num_blocks=4, stride=2)
-        self.layer8 = self._make_layer(1024, 1024, num_blocks=4, stride=1)
+        # Updated to include 12 residual blocks
+        self.layer1 = ResidualBlock(16, 16)
+        self.layer2 = ResidualBlock(16, 32, stride=2)
+        self.layer3 = ResidualBlock(32, 32)
+        self.layer4 = ResidualBlock(32, 64, stride=2)
+        self.layer5 = ResidualBlock(64, 64)
+        self.layer6 = ResidualBlock(64, 128, stride=2)
+        self.layer7 = ResidualBlock(128, 128)
+        self.layer8 = ResidualBlock(128, 256, stride=2)
+        self.layer9 = ResidualBlock(256, 256)
+        self.layer10 = ResidualBlock(256, 512, stride=2)
+        self.layer11 = ResidualBlock(512, 512)
+        self.layer12 = ResidualBlock(512, 1024, stride=2)
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
 
-        # Fully connected layers updated for deeper architecture
+        # Adjusted FC layers to handle increased feature complexity
         self.fc1 = nn.Linear(1024, 512)
         self.fc_bn1 = nn.BatchNorm1d(512)
         self.fc2 = nn.Linear(512, 256)
@@ -61,13 +63,6 @@ class CustomSceneCNN(nn.Module):
         self.fc3 = nn.Linear(256, 6)
 
         self.dropout = nn.Dropout(0.5)
-
-    def _make_layer(self, in_channels, out_channels, num_blocks, stride):
-        layers = []
-        layers.append(ResidualBlock(in_channels, out_channels, stride))
-        for _ in range(1, num_blocks):
-            layers.append(ResidualBlock(out_channels, out_channels))
-        return nn.Sequential(*layers)
 
     def forward(self, x):
         x = self.relu(self.bn1(self.conv1(x)))
@@ -80,6 +75,10 @@ class CustomSceneCNN(nn.Module):
         x = self.layer6(x)
         x = self.layer7(x)
         x = self.layer8(x)
+        x = self.layer9(x)
+        x = self.layer10(x)
+        x = self.layer11(x)
+        x = self.layer12(x)
 
         x = self.avgpool(x)
         x = x.view(x.size(0), -1)
