@@ -56,6 +56,44 @@ class CustomSceneCNN(nn.Module):
         x = self.fc_layers(x)
         return x
 
+class CustomSceneCNN4(nn.Module):
+    def __init__(self):
+        super(CustomSceneCNN4, self).__init__()
+
+        self.conv1 = nn.Conv2d(3, 16, kernel_size=3, stride=1, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(16)
+        self.relu = nn.ReLU(inplace=True)
+
+        self.layer1 = ResidualBlock(16, 16)
+        self.layer2 = ResidualBlock(16, 32, stride=2)
+        self.layer3 = ResidualBlock(32, 32)
+        self.layer4 = ResidualBlock(32, 64, stride=2)
+
+        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
+
+        self.fc1 = nn.Linear(64, 32)
+        self.fc_bn1 = nn.BatchNorm1d(32)
+        self.fc2 = nn.Linear(32, 6)
+
+        self.dropout = nn.Dropout(0.5)
+
+    def forward(self, x):
+        x = self.relu(self.bn1(self.conv1(x)))
+
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer3(x)
+        x = self.layer4(x)
+
+        x = self.avgpool(x)
+        x = x.view(x.size(0), -1)
+
+        x = self.relu(self.fc_bn1(self.fc1(x)))
+        x = self.dropout(x)
+        x = self.fc2(x)
+
+        return x
+
 class CustomSceneCNN6(nn.Module):
     def __init__(self):
         super(CustomSceneCNN6, self).__init__()
