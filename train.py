@@ -56,6 +56,11 @@ def main():
 
     start_time = time.time()
     best_test_acc = 0.0
+    
+    # Early stopping parameters
+    patience = config.PATIENCE
+    patience_counter = 0
+    early_stopped = False
 
     # Create a progress bar for epochs
     epoch_pbar = tqdm(range(config.MAX_EPOCHS), desc="Training Progress", unit="epoch")
@@ -93,14 +98,25 @@ def main():
             'train_acc': f'{train_accuracy:.2f}%',
             'test_acc': f'{test_accuracy:.2f}%',
             'time': f'{epoch_time:.2f}s',
-            'eta': f'{eta/60:.2f}min'
+            'eta': f'{eta/60:.2f}min',
+            'patience': f'{patience_counter}/{patience}'
         })
 
+        # Check if model performance improved
         if test_accuracy > best_test_acc:
             best_test_acc = test_accuracy
             best_model_path = config.MODEL_PATH.replace("model.pth", "best_model.pth")
             torch.save(model.state_dict(), best_model_path)
             epoch_pbar.write(f"\u2705 New best model saved at {best_model_path} with {test_accuracy:.2f}% test accuracy.")
+            patience_counter = 0  # Reset patience counter
+        else:
+            patience_counter += 1  # Increment patience counter
+            
+        # Check for early stopping
+        if patience_counter >= patience:
+            epoch_pbar.write(f"\u26A0 Early stopping triggered after {epoch+1} epochs without improvement.")
+            early_stopped = True
+            break
 
     # Final save
     end_time = time.time()
@@ -109,6 +125,8 @@ def main():
     torch.save(history, config.HISTORY_PATH)
     
     print(f"Training completed in {total_time/60:.2f} minutes")
+    if early_stopped:
+        print(f"Early stopping activated. Best accuracy: {best_test_acc:.2f}%")
 
     # Training summary
     summary_path = config.MODEL_PATH.replace("model.pth", "training_summary.txt")
@@ -132,6 +150,9 @@ def main():
         f.write(f"Learning Rate: {config.LEARNING_RATE}\n")
         f.write(f"Epochs: {config.MAX_EPOCHS}\n")
         f.write(f"Best Test Accuracy: {best_test_acc:.2f}%\n")
+        f.write(f"Early Stopping: {'Yes' if early_stopped else 'No'}\n")
+        if early_stopped:
+            f.write(f"Stopped at epoch: {epoch+1}/{config.MAX_EPOCHS}\n")
 
 if __name__ == "__main__":
     main()
