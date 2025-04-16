@@ -11,8 +11,9 @@ import os
 import time
 from tqdm import tqdm
 
-def main():
-    config = Config()
+def main(student_model=None, config=None):
+    if config is None:
+        config = Config()
     device = torch.device(config.DEVICE)
 
     print(f"Using device: {device}")
@@ -24,19 +25,16 @@ def main():
     train_loader = DataLoader(train_dataset, batch_size=config.BATCH_SIZE, shuffle=True, num_workers=config.NUM_WORKERS)
     test_loader = DataLoader(test_dataset, batch_size=config.BATCH_SIZE, shuffle=False, num_workers=config.NUM_WORKERS)
 
-    # Student model
-    model = ModularCNN(num_residual_blocks=config.RESIDUAL_BLOCKS,
-                       num_fc_layers=len(config.FULLY_CONNECTED_LAYERS),
-                       num_classes=config.NUM_CLASSES).to(device)
-    
-    print(model)
+    # Use the provided student model or raise an error if not provided
+    if student_model is None:
+        raise ValueError("A student model must be provided to train_main.")
+    student_model = student_model.to(device)
 
-    conv_layers = sum(1 for module in model.modules() if isinstance(module, nn.Conv2d))
-    print(f"Number of layers: {conv_layers}")
+    print(student_model)
 
     # Optimizer and loss
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=config.LEARNING_RATE)
+    optimizer = optim.Adam(student_model.parameters(), lr=config.LEARNING_RATE)
 
     # AMP scaler
     scaler = torch.amp.GradScaler() if config.USE_MIXED_PRECISION else None
@@ -75,7 +73,7 @@ def main():
         epoch_start = time.time()
         
         train_loss, train_accuracy = train_with_teacher(
-            student=model,
+            student=student_model,
             teacher=teacher_model,
             train_loader=train_loader,
             optimizer=optimizer,
@@ -86,7 +84,7 @@ def main():
             scaler=scaler
         )
 
-        test_loss, test_accuracy = test(model, test_loader, criterion, device)
+        test_loss, test_accuracy = test(student_model, test_loader, criterion, device)
 
         history['train_loss'].append(train_loss)
         history['train_accuracy'].append(train_accuracy)
@@ -111,7 +109,7 @@ def main():
         if test_accuracy > best_test_acc:
             best_test_acc = test_accuracy
             best_model_path = config.MODEL_PATH.replace("model.pth", "best_model.pth")
-            torch.save(model.state_dict(), best_model_path)
+            torch.save(student_model.state_dict(), best_model_path)
             epoch_pbar.write(f"\u2705 New best model saved at {best_model_path} with {test_accuracy:.2f}% test accuracy.")
             patience_counter = 0  # Reset patience counter
         else:
@@ -126,7 +124,7 @@ def main():
     # Final save
     end_time = time.time()
     total_time = end_time - start_time
-    torch.save(model.state_dict(), config.MODEL_PATH)
+    torch.save(student_model.state_dict(), config.MODEL_PATH)
     torch.save(history, config.HISTORY_PATH)
     
     print(f"Training completed in {total_time/60:.2f} minutes")
@@ -135,7 +133,7 @@ def main():
 
     # Training summary
     summary_path = config.MODEL_PATH.replace("model.pth", "training_summary.txt")
-    total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    total_params = sum(p.numel() for p in student_model.parameters() if p.requires_grad)
     if config.USE_MIXED_PRECISION:
         precision = "FP16 (mixed)"
     else:
