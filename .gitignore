@@ -1,6 +1,5 @@
 *.zip
 venv/
-*.pth
 data/intel-image-classification
 *.jpg
 *.pyc
@@ -8,5 +7,5 @@ data/intel-image-classification
 *.tar.gz
 *.tar
 *.gz
-checkpoints
 tempCodeRunnerFile.py
+*32*.pth
