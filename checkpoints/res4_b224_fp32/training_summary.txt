@@ -1,0 +1,13 @@
+Model Architecture: ModularCNN
+Residual Blocks: 4
+Fully Connected Layers: [64, 32]
+Trainable Parameters: 98,294
+Precision: TORCH.FLOAT32
+Training Time: 698.73 seconds
+Hardware Used: NVIDIA GeForce RTX 4070 Laptop GPU
+Batch Size: 224
+Learning Rate: 0.001
+Epochs: 15
+Best Test Accuracy: 82.30%
+Early Stopping: Yes
+Stopped at epoch: 11/15

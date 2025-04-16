@@ -1,0 +1,5 @@
+Residual Blocks: 16
+FC Layers: [1024, 512, 256, 64]
+Batch Size: 196
+Num Workers: 8
+Precision: FP16
