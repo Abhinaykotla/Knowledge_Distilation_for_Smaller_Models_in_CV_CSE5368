@@ -3,14 +3,14 @@ import torch
 import gc
 from config import Config
 from train import main as train_main
+from tqdm import tqdm
 
 def run_experiments():
     experiments = [
-        # {"res_blocks": 4, "fc_layers": [16, 8]}
-
-        {"res_blocks": 14, "fc_layers": [512, 256, 128, 64, 32, 16, 8]},
-        {"res_blocks": 10, "fc_layers": [512, 256, 128, 64, 32, 16]},
-        {"res_blocks": 6,  "fc_layers": [256, 128, 64, 32, 16]}
+        # Each experiment now includes batch_size and num_workers
+        {"res_blocks": 14, "fc_layers": [512, 256, 128, 64, 32, 16, 8], "batch_size": 4, "num_workers": 2},
+        {"res_blocks": 10, "fc_layers": [512, 256, 128, 64, 32, 16], "batch_size": 10, "num_workers": 2},
+        {"res_blocks": 6,  "fc_layers": [256, 128, 64, 32, 16], "batch_size": 16, "num_workers": 4}
     ]
 
 # def run_experiments():
@@ -35,6 +35,10 @@ def run_experiments():
 
 
     precisions = ["fp32", "fp16"] # "fp64", 
+    
+    # Add a progress bar for all experiments
+    total_experiments = len(experiments) * len(precisions)
+    experiments_pbar = tqdm(total=total_experiments, desc="Overall Progress", position=0)
 
     for i, exp in enumerate(experiments, 1):
         for precision in precisions:
@@ -42,13 +46,15 @@ def run_experiments():
             torch.cuda.empty_cache()
             gc.collect()
             
-            experiment_name = f"res{exp['res_blocks']}_{precision}"
+            experiment_name = f"res{exp['res_blocks']}_b{exp['batch_size']}_{precision}"
             experiment_dir = os.path.join("checkpoints", experiment_name)
             os.makedirs(experiment_dir, exist_ok=True)
 
             # Set config
             Config.RESIDUAL_BLOCKS = exp["res_blocks"]
             Config.FULLY_CONNECTED_LAYERS = exp["fc_layers"]
+            Config.BATCH_SIZE = exp["batch_size"]
+            Config.NUM_WORKERS = exp["num_workers"]
             Config.MODEL_PATH = os.path.join(experiment_dir, "model.pth")
             Config.HISTORY_PATH = os.path.join(experiment_dir, "history.pth")
 
@@ -64,19 +70,19 @@ def run_experiments():
             else:
                 raise ValueError("Invalid precision. Choose 'fp16', 'fp32', or 'fp64'.")
 
-
-
             # Save config
             with open(os.path.join(experiment_dir, "config.txt"), "w") as f:
                 f.write(f"Residual Blocks: {exp['res_blocks']}\n")
                 f.write(f"FC Layers: {exp['fc_layers']}\n")
+                f.write(f"Batch Size: {exp['batch_size']}\n")
+                f.write(f"Num Workers: {exp['num_workers']}\n")
                 f.write(f"Precision: {precision.upper()}\n")
 
             # Print memory stats before starting
             if torch.cuda.is_available():
                 print(f"GPU memory before training: {torch.cuda.memory_allocated()/1024**2:.1f}MB / {torch.cuda.get_device_properties(0).total_memory/1024**2:.1f}MB")
             
-            print(f"\n\U0001f52c Running {experiment_name} → ResBlocks={exp['res_blocks']}, Precision={precision.upper()}")
+            print(f"\n\U0001f52c Running {experiment_name} → ResBlocks={exp['res_blocks']}, BatchSize={exp['batch_size']}, Precision={precision.upper()}")
             
             train_main()
             
@@ -89,6 +95,11 @@ def run_experiments():
                 print(f"GPU memory after cleanup: {torch.cuda.memory_allocated()/1024**2:.1f}MB / {torch.cuda.get_device_properties(0).total_memory/1024**2:.1f}MB")
             
             print(f"Completed {experiment_name}")
+            
+            # Update the overall progress bar
+            experiments_pbar.update(1)
+    
+    experiments_pbar.close()
 
 if __name__ == '__main__':
     # Check if GPU is available
