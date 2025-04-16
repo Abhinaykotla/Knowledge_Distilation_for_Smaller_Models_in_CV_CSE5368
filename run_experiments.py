@@ -4,48 +4,34 @@ import gc
 from config import Config
 from train import main as train_main
 from tqdm import tqdm
+from models.cnn_model import CustomSceneCNN6, CustomSceneCNN8, CustomSceneCNN10
 
 def run_experiments():
     experiments = [
-        # {"res_blocks": 14, "fc_layers": [512, 256, 128, 64, 32, 16, 8], "batch_size": 4, "num_workers": 2},
-        # {"res_blocks": 10, "fc_layers": [512, 256, 64, 16], "batch_size": 6, "num_workers": 4},
-        # {"res_blocks": 8,  "fc_layers": [256, 64, 16], "batch_size": 14, "num_workers": 4},
-        {"res_blocks": 6,  "fc_layers": [128, 64, 16], "batch_size": 24, "num_workers": 6}
+        {"res_blocks": 6, "fc_layers": [128, 64, 16], "batch_size": 224, "num_workers": 8},
+        {"res_blocks": 8, "fc_layers": [256, 64, 16], "batch_size": 224, "num_workers": 8},
+        {"res_blocks": 10, "fc_layers": [512, 256, 64, 16], "batch_size": 224, "num_workers": 8}
     ]
 
-# def run_experiments():
-    # experiments = [
-    #     {"res_blocks": 32, "fc_layers": [2048, 1024, 512, 256, 128, 64, 32, 16, 8]},
-    #     {"res_blocks": 30, "fc_layers": [2048, 1024, 512, 256, 128, 64, 32, 16]},
-    #     {"res_blocks": 28, "fc_layers": [1024, 512, 256, 128, 64, 32, 16, 8]},
-    #     {"res_blocks": 26, "fc_layers": [1024, 512, 256, 128, 64, 32, 16]},
-    #     {"res_blocks": 24, "fc_layers": [512, 256, 128, 64, 32, 16, 8]},
-    #     {"res_blocks": 22, "fc_layers": [512, 256, 128, 64, 32, 16]},
-    #     {"res_blocks": 20, "fc_layers": [256, 128, 64, 32, 16, 8]},
-    #     {"res_blocks": 18, "fc_layers": [256, 128, 64, 32, 16]},
-    #     {"res_blocks": 16, "fc_layers": [128, 64, 32, 16, 8]},
-    #     {"res_blocks": 14, "fc_layers": [128, 64, 32, 16]},
-    #     {"res_blocks": 12, "fc_layers": [64, 32, 16, 8]},
-    #     {"res_blocks": 10, "fc_layers": [64, 32, 16]},
-    #     {"res_blocks": 8,  "fc_layers": [32, 16, 8]},
-    #     {"res_blocks": 6,  "fc_layers": [32, 16]},
-    #     {"res_blocks": 4,  "fc_layers": [16, 8]},
-    #     {"res_blocks": 2,  "fc_layers": [16]},
-    # ]
+    precisions = ["fp32", "fp16"]
 
-
-    precisions = ["fp32", "fp16"] # "fp64", 
-    
     # Add a progress bar for all experiments
     total_experiments = len(experiments) * len(precisions)
     experiments_pbar = tqdm(total=total_experiments, desc="Overall Progress", position=0)
+
+    # Map residual blocks to corresponding models
+    model_mapping = {
+        6: CustomSceneCNN6,
+        8: CustomSceneCNN8,
+        10: CustomSceneCNN10,
+    }
 
     for i, exp in enumerate(experiments, 1):
         for precision in precisions:
             # Force complete cleanup before each experiment
             torch.cuda.empty_cache()
             gc.collect()
-            
+
             experiment_name = f"res{exp['res_blocks']}_b{exp['batch_size']}_{precision}"
             experiment_dir = os.path.join("checkpoints", experiment_name)
             os.makedirs(experiment_dir, exist_ok=True)
@@ -78,27 +64,34 @@ def run_experiments():
                 f.write(f"Num Workers: {exp['num_workers']}\n")
                 f.write(f"Precision: {precision.upper()}\n")
 
+            # Select the appropriate model based on the number of residual blocks
+            if exp["res_blocks"] in model_mapping:
+                student_model = model_mapping[exp["res_blocks"]]()
+            else:
+                raise ValueError(f"No model defined for {exp['res_blocks']} residual blocks.")
+
             # Print memory stats before starting
             if torch.cuda.is_available():
                 print(f"GPU memory before training: {torch.cuda.memory_allocated()/1024**2:.1f}MB / {torch.cuda.get_device_properties(0).total_memory/1024**2:.1f}MB")
-            
+
             print(f"\n\U0001f52c Running {experiment_name} → ResBlocks={exp['res_blocks']}, BatchSize={exp['batch_size']}, Precision={precision.upper()}")
-            
-            train_main()
-            
+
+            # Train the model
+            train_main(student_model=student_model, config=Config)
+
             # Force complete cleanup after each experiment
             torch.cuda.empty_cache()
             gc.collect()
-            
+
             # Print memory stats after cleanup
             if torch.cuda.is_available():
                 print(f"GPU memory after cleanup: {torch.cuda.memory_allocated()/1024**2:.1f}MB / {torch.cuda.get_device_properties(0).total_memory/1024**2:.1f}MB")
-            
+
             print(f"Completed {experiment_name}")
-            
+
             # Update the overall progress bar
             experiments_pbar.update(1)
-    
+
     experiments_pbar.close()
 
 if __name__ == '__main__':
