@@ -14,8 +14,8 @@ class Config:
     BATCH_SIZE = 12
     NUM_WORKERS = 4
     LEARNING_RATE = 0.001
-    MAX_EPOCHS = 2
-    PATIENCE =2
+    MAX_EPOCHS = 15
+    PATIENCE =3
     USE_MIXED_PRECISION = True
 
     # Model configuration
