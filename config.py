@@ -11,7 +11,7 @@ class Config:
 
 
     # Hyperparameters
-    BATCH_SIZE = 8
+    BATCH_SIZE = 12
     NUM_WORKERS = 4
     LEARNING_RATE = 0.001
     MAX_EPOCHS = 2
