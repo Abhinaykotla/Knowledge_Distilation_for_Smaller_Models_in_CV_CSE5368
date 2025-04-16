@@ -42,11 +42,8 @@ def main():
     for param in teacher_model.parameters():
         param.requires_grad = False
 
-    # Match dtype to student model
-    if config.USE_MIXED_PRECISION:
-        teacher_model = teacher_model.to(dtype=torch.float16)
-    else:
-        teacher_model = teacher_model.to(dtype=torch.float32)
+    # Match teacher model dtype to current precision
+    teacher_model = teacher_model.to(dtype=torch.get_default_dtype())
 
     # History tracking
     history = {
@@ -96,7 +93,11 @@ def main():
     # Training summary
     summary_path = config.MODEL_PATH.replace("model.pth", "training_summary.txt")
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    precision = "FP16 (mixed)" if config.USE_MIXED_PRECISION else "FP32"
+    if config.USE_MIXED_PRECISION:
+        precision = "FP16 (mixed)"
+    else:
+        precision = str(torch.get_default_dtype()).upper()
+
     gpu_name = torch.cuda.get_device_name(0) if torch.cuda.is_available() else "CPU"
 
     with open(summary_path, "w") as f:
