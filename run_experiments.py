@@ -6,16 +6,29 @@ from train import main as train_main
 
 def run_experiments():
     experiments = [
-        {"res_blocks": 2, "fc_layers": [512]},
-        {"res_blocks": 4, "fc_layers": [1024, 256]},
+        {"res_blocks": 2, "fc_layers": [16]},
+        {"res_blocks": 4, "fc_layers": [16, 8]}
     ]
 
 # def run_experiments():
-#     experiments = [
-#         {"res_blocks": 10, "fc_layers": [2048, 1024, 512, 256]},
-#         {"res_blocks": 14, "fc_layers": [2048, 1024, 512, 256, 128, 64]},
-#         {"res_blocks": 18, "fc_layers": [2048, 1024, 512, 256, 128, 64]}
-#     ]
+    # experiments = [
+    #     {"res_blocks": 2, "fc_layers": [16]},
+    #     {"res_blocks": 4, "fc_layers": [16, 8]},
+    #     {"res_blocks": 6, "fc_layers": [32, 16]},
+    #     {"res_blocks": 8, "fc_layers": [32, 16, 8]},
+    #     {"res_blocks": 10, "fc_layers": [64, 32, 16]},
+    #     {"res_blocks": 12, "fc_layers": [64, 32, 16, 8]},
+    #     {"res_blocks": 14, "fc_layers": [128, 64, 32, 16]},
+    #     {"res_blocks": 16, "fc_layers": [128, 64, 32, 16, 8]},
+    #     {"res_blocks": 18, "fc_layers": [256, 128, 64, 32, 16]},
+    #     {"res_blocks": 20, "fc_layers": [256, 128, 64, 32, 16, 8]},
+    #     {"res_blocks": 22, "fc_layers": [512, 256, 128, 64, 32, 16]},
+    #     {"res_blocks": 24, "fc_layers": [512, 256, 128, 64, 32, 16, 8]},
+    #     {"res_blocks": 26, "fc_layers": [1024, 512, 256, 128, 64, 32, 16]},
+    #     {"res_blocks": 28, "fc_layers": [1024, 512, 256, 128, 64, 32, 16, 8]},
+    #     {"res_blocks": 30, "fc_layers": [2048, 1024, 512, 256, 128, 64, 32, 16]},
+    #     {"res_blocks": 32, "fc_layers": [2048, 1024, 512, 256, 128, 64, 32, 16, 8]},
+    # ]
 
 
     precisions = ["fp16", "fp32"]
@@ -39,7 +52,7 @@ def run_experiments():
             # Set precision
             if precision == "fp16":
                 Config.USE_MIXED_PRECISION = True
-                torch.set_default_dtype(torch.float32)
+                torch.set_default_dtype(torch.float16)
             elif precision == "fp32":
                 Config.USE_MIXED_PRECISION = False
                 torch.set_default_dtype(torch.float32)
