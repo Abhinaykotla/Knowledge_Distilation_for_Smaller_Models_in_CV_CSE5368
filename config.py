@@ -7,7 +7,7 @@ class Config:
     DATASET_PATH = os.path.join('data', 'intel-image-classification')
     TRAIN_DATASET_PATH = os.path.join(DATASET_PATH, 'seg_train', 'seg_train')
     TEST_DATASET_PATH = os.path.join(DATASET_PATH, 'seg_test', 'seg_test')
-    TEACHER_MODEL_PATH = './checkpoints/teacher_32layers_model.pth'
+    TEACHER_MODEL_PATH = './checkpoints/teacher_16layers_model.pth'
 
 
     # Hyperparameters
@@ -33,14 +33,10 @@ class Config:
     # Dataset transformations
     train_transform = transforms.Compose([
         transforms.Resize((150, 150)),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomRotation(10),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
     test_transform = transforms.Compose([
         transforms.Resize((150, 150)),
         transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
