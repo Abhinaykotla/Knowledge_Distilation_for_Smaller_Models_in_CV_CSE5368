@@ -9,6 +9,7 @@ from config import Config
 from models.teacher_arch import CustomSceneCNN as TeacherCNN
 import os
 import time
+from tqdm import tqdm
 
 def main():
     config = Config()
@@ -56,7 +57,13 @@ def main():
     start_time = time.time()
     best_test_acc = 0.0
 
-    for epoch in range(config.MAX_EPOCHS):
+    # Create a progress bar for epochs
+    epoch_pbar = tqdm(range(config.MAX_EPOCHS), desc="Training Progress", unit="epoch")
+    
+    for epoch in epoch_pbar:
+        # Start time for this epoch
+        epoch_start = time.time()
+        
         train_loss, train_accuracy = train_with_teacher(
             student=model,
             teacher=teacher_model,
@@ -75,20 +82,33 @@ def main():
         history['train_accuracy'].append(train_accuracy)
         history['test_loss'].append(test_loss)
         history['test_accuracy'].append(test_accuracy)
-
-        print(f"Epoch {epoch+1}/{config.MAX_EPOCHS}, Train Loss: {train_loss:.4f}, Train Acc: {train_accuracy:.2f}%, Test Loss: {test_loss:.4f}, Test Acc: {test_accuracy:.2f}%")
+        
+        # Calculate epoch time
+        epoch_time = time.time() - epoch_start
+        eta = epoch_time * (config.MAX_EPOCHS - epoch - 1)
+        
+        # Update progress bar with detailed information
+        epoch_pbar.set_postfix({
+            'train_loss': f'{train_loss:.4f}', 
+            'train_acc': f'{train_accuracy:.2f}%',
+            'test_acc': f'{test_accuracy:.2f}%',
+            'time': f'{epoch_time:.2f}s',
+            'eta': f'{eta/60:.2f}min'
+        })
 
         if test_accuracy > best_test_acc:
             best_test_acc = test_accuracy
             best_model_path = config.MODEL_PATH.replace("model.pth", "best_model.pth")
             torch.save(model.state_dict(), best_model_path)
-            print(f"\u2705 New best model saved at {best_model_path} with {test_accuracy:.2f}% test accuracy.")
+            epoch_pbar.write(f"\u2705 New best model saved at {best_model_path} with {test_accuracy:.2f}% test accuracy.")
 
     # Final save
     end_time = time.time()
     total_time = end_time - start_time
     torch.save(model.state_dict(), config.MODEL_PATH)
     torch.save(history, config.HISTORY_PATH)
+    
+    print(f"Training completed in {total_time/60:.2f} minutes")
 
     # Training summary
     summary_path = config.MODEL_PATH.replace("model.pth", "training_summary.txt")
