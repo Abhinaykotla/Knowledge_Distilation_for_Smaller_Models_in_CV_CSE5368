@@ -7,10 +7,10 @@ from tqdm import tqdm
 
 def run_experiments():
     experiments = [
-        # Each experiment now includes batch_size and num_workers
-        {"res_blocks": 14, "fc_layers": [512, 256, 128, 64, 32, 16, 8], "batch_size": 4, "num_workers": 2},
-        {"res_blocks": 10, "fc_layers": [512, 256, 128, 64, 32, 16], "batch_size": 10, "num_workers": 2},
-        {"res_blocks": 6,  "fc_layers": [256, 128, 64, 32, 16], "batch_size": 16, "num_workers": 4}
+        # {"res_blocks": 14, "fc_layers": [512, 256, 128, 64, 32, 16, 8], "batch_size": 4, "num_workers": 2},
+        {"res_blocks": 10, "fc_layers": [512, 256, 128, 64, 32, 16], "batch_size": 6, "num_workers": 4},
+        {"res_blocks": 8,  "fc_layers": [256, 128, 64, 32, 16, 8], "batch_size": 14, "num_workers": 4},
+        {"res_blocks": 6,  "fc_layers": [128, 64, 32, 16, 8], "batch_size": 28, "num_workers": 4}
     ]
 
 # def run_experiments():
