@@ -1,5 +1,0 @@
-Residual Blocks: 4
-FC Layers: [64, 32]
-Batch Size: 224
-Num Workers: 8
-Precision: FP32

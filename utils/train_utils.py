@@ -78,6 +78,7 @@ def train(model, train_loader, optimizer, criterion, device, scaler=None):
         optimizer.zero_grad()
 
         if scaler:
+            # Use mixed precision for fp16 or fp32 with GradScaler
             with torch.amp.autocast(device_type='cuda'):
                 outputs = model(data)
                 loss = criterion(outputs, target)
@@ -85,6 +86,7 @@ def train(model, train_loader, optimizer, criterion, device, scaler=None):
             scaler.step(optimizer)
             scaler.update()
         else:
+            # Standard precision for fp8 or when GradScaler is not used
             outputs = model(data)
             loss = criterion(outputs, target)
             loss.backward()
