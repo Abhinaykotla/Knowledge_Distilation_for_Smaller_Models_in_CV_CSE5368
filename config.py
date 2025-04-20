@@ -16,7 +16,8 @@ class Config:
     LEARNING_RATE = 0.001
     MAX_EPOCHS = 15
     PATIENCE =3
-    USE_MIXED_PRECISION = True
+    USE_MIXED_PRECISION = False  # Default
+    PRECISION = "fp32"  # Default precision
 
     # Model configuration
     NUM_CLASSES = 6

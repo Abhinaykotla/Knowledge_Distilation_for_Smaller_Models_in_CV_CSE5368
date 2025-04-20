@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
+import bitsandbytes as bnb
 from torch.utils.data import DataLoader
 from models.blocks import ModularCNN
 from data.dataset import IntelImageDataset
@@ -30,14 +30,22 @@ def main(student_model=None, config=None):
         raise ValueError("A student model must be provided to train_main.")
     student_model = student_model.to(device)
 
+    # Quantize the student model to 8-bit precision if using fp8
+    if str(torch.get_default_dtype()) == "torch.float8":
+        student_model = bnb.nn.quantize(student_model, dtype=torch.float8)
+
     print(student_model)
 
     # Optimizer and loss
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(student_model.parameters(), lr=config.LEARNING_RATE)
 
-    # AMP scaler
-    scaler = torch.amp.GradScaler() if config.USE_MIXED_PRECISION else None
+    # Use bitsandbytes 8-bit optimizer for fp8 precision
+    if str(torch.get_default_dtype()) == "torch.float8":
+        optimizer = bnb.optim.Adam8bit(student_model.parameters(), lr=config.LEARNING_RATE)
+        scaler = None  # Disable GradScaler for 8-bit optimizers
+    else:
+        optimizer = torch.optim.Adam(student_model.parameters(), lr=config.LEARNING_RATE)
+        scaler = torch.amp.GradScaler() if config.USE_MIXED_PRECISION else None
 
     # Load teacher model
     teacher_model = TeacherCNN().to(device)
@@ -45,6 +53,10 @@ def main(student_model=None, config=None):
     teacher_model.eval()
     for param in teacher_model.parameters():
         param.requires_grad = False
+
+    # Quantize the teacher model to 8-bit precision if using fp8
+    if str(torch.get_default_dtype()) == "torch.float8":
+        teacher_model = bnb.nn.quantize(teacher_model, dtype=torch.float8)
 
     # Match teacher model dtype to current precision
     teacher_model = teacher_model.to(dtype=torch.get_default_dtype())
@@ -158,4 +170,6 @@ def main(student_model=None, config=None):
             f.write(f"Stopped at epoch: {epoch+1}/{config.MAX_EPOCHS}\n")
 
 if __name__ == "__main__":
-    main()
+    from models.cnn_model import CustomSceneCNN4  # Import your model
+    student_model = CustomSceneCNN4()  # Instantiate the model
+    main(student_model=student_model)

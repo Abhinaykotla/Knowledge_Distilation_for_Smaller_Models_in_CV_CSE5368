@@ -6,17 +6,18 @@ from train import main as train_main
 from tqdm import tqdm
 from models.cnn_model import CustomSceneCNN4, CustomSceneCNN6, CustomSceneCNN8, CustomSceneCNN10
 from models.teacher_arch import CustomSceneCNN
+import bitsandbytes as bnb
 
 def run_experiments():
     experiments = [
-        # {"res_blocks": 4, "fc_layers": [64, 32], "batch_size": 224, "num_workers": 8},
+        {"res_blocks": 4, "fc_layers": [64, 32], "batch_size": 224, "num_workers": 8},
         # {"res_blocks": 6, "fc_layers": [128, 64, 16], "batch_size": 224, "num_workers": 8},
         # {"res_blocks": 8, "fc_layers": [256, 64, 16], "batch_size": 224, "num_workers": 8},
         # {"res_blocks": 10, "fc_layers": [512, 256, 64, 16], "batch_size": 224, "num_workers": 8},
-        {"res_blocks": 16, "fc_layers": [1024, 512, 256, 64], "batch_size": 196, "num_workers": 8}
+        # {"res_blocks": 12, "fc_layers": [1024, 512, 256, 64], "batch_size": 196, "num_workers": 8}
     ]
 
-    precisions = ["fp32", "fp16"]
+    precisions = ["fp32"] #"fp32", "fp16", 
 
     # Add a progress bar for all experiments
     total_experiments = len(experiments) * len(precisions)
@@ -28,7 +29,7 @@ def run_experiments():
         6: CustomSceneCNN6,
         8: CustomSceneCNN8,
         10: CustomSceneCNN10,
-        16: CustomSceneCNN,  # Teacher model
+        12: CustomSceneCNN,  # Teacher model
     }
 
     for i, exp in enumerate(experiments, 1):
@@ -51,15 +52,14 @@ def run_experiments():
 
             if precision == "fp16":
                 Config.USE_MIXED_PRECISION = True
-                torch.set_default_dtype(torch.float32)  # Needed for AMP stability
+                torch.set_default_dtype(torch.float32)  # Use 16-bit precision
             elif precision == "fp32":
                 Config.USE_MIXED_PRECISION = False
-                torch.set_default_dtype(torch.float32)
-            elif precision == "fp64":
+                torch.set_default_dtype(torch.float32)  # Use 32-bit precision
+            elif precision == "fp8":
                 Config.USE_MIXED_PRECISION = False
-                torch.set_default_dtype(torch.float64)
             else:
-                raise ValueError("Invalid precision. Choose 'fp16', 'fp32', or 'fp64'.")
+                raise ValueError("Invalid precision. Choose 'fp16', 'fp32', or 'fp8'.")
 
             # Save config
             with open(os.path.join(experiment_dir, "config.txt"), "w") as f:
