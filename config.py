@@ -7,7 +7,7 @@ class Config:
     DATASET_PATH = os.path.join('data', 'intel-image-classification')
     TRAIN_DATASET_PATH = os.path.join(DATASET_PATH, 'seg_train', 'seg_train')
     TEST_DATASET_PATH = os.path.join(DATASET_PATH, 'seg_test', 'seg_test')
-    TEACHER_MODEL_PATH = './checkpoints/teacher_16layers_model.pth'
+    TEACHER_MODEL_PATH = './checkpoints/teacher_12layers_model.pth'
 
 
     # Hyperparameters

@@ -9,5 +9,5 @@ data/intel-image-classification
 *.gz
 tempCodeRunnerFile.py
 *32*.pth
-*16*.pth
-/checkpoints/res16*/*.pth
+*12*.pth
+/checkpoints/res12*/*.pth

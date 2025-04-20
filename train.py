@@ -158,7 +158,6 @@ def main(student_model=None, config=None):
         f.write(f"Residual Blocks: {config.RESIDUAL_BLOCKS}\n")
         f.write(f"Fully Connected Layers: {config.FULLY_CONNECTED_LAYERS}\n")
         f.write(f"Trainable Parameters: {total_params:,}\n")
-        f.write(f"Precision: {precision}\n")
         f.write(f"Training Time: {total_time:.2f} seconds\n")
         f.write(f"Hardware Used: {gpu_name}\n")
         f.write(f"Batch Size: {config.BATCH_SIZE}\n")
