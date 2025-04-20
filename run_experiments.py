@@ -11,10 +11,10 @@ import bitsandbytes as bnb
 def run_experiments():
     experiments = [
         {"res_blocks": 4, "fc_layers": [64, 32], "batch_size": 224, "num_workers": 8},
-        # {"res_blocks": 6, "fc_layers": [128, 64, 16], "batch_size": 224, "num_workers": 8},
-        # {"res_blocks": 8, "fc_layers": [256, 64, 16], "batch_size": 224, "num_workers": 8},
-        # {"res_blocks": 10, "fc_layers": [512, 256, 64, 16], "batch_size": 224, "num_workers": 8},
-        # {"res_blocks": 12, "fc_layers": [1024, 512, 256, 64], "batch_size": 196, "num_workers": 8}
+        {"res_blocks": 6, "fc_layers": [128, 64, 16], "batch_size": 224, "num_workers": 8},
+        {"res_blocks": 8, "fc_layers": [256, 64, 16], "batch_size": 224, "num_workers": 8},
+        {"res_blocks": 10, "fc_layers": [512, 256, 64, 16], "batch_size": 224, "num_workers": 8},
+        {"res_blocks": 12, "fc_layers": [1024, 512, 256, 64], "batch_size": 196, "num_workers": 8}
     ]
 
     precisions = ["fp32"] #"fp32", "fp16", 
