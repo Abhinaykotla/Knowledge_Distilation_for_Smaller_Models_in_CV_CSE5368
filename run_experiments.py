@@ -17,7 +17,7 @@ def run_experiments():
         {"res_blocks": 12, "fc_layers": [1024, 512, 256, 64], "batch_size": 196, "num_workers": 8}
     ]
 
-    precisions = ["fp32"] #"fp32", "fp16", 
+    precisions = ["fp8", "fp16", "fp32"] #
 
     # Add a progress bar for all experiments
     total_experiments = len(experiments) * len(precisions)
