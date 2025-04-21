@@ -10,4 +10,4 @@ data/intel-image-classification
 tempCodeRunnerFile.py
 *32*.pth
 *12*.pth
-# /checkpoints/res12*/*model.pth
+/checkpoints/res12*/*model.pth
