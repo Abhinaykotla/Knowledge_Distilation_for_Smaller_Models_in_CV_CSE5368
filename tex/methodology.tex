@@ -1,9 +1,63 @@
 \section{Methodology}
 
-\cite{xia2023diffir}
+\subsection{Intel Image Dataset}
 
-\subsection{Knowledge Distillation}
+The Intel Image Classification Dataset \cite{intel_image_classification_kaggle} was curated
+as part of a data hackathon organized
+by Intel \footnote{https://www.intel.com/content/www/us/en/homepage.html}
+on an online platform Kaggle \footnote{https://www.kaggle.com/},
+with the aim of fostering engagement and innovation within data science communities.
+The dataset comprises 25,000 RGB color images,
+each with a resolution of 150 $\times$ 150 pixels,
+depicting a variety of natural and urban scenes from around the world.
+The images, originally captured by Jan Böttinger
+on Unsplash \footnote{https://unsplash.com/},
+are labeled into six distinct classes: buildings, forest, glacier, mountain, sea, and street.
 
+The dataset is partitioned into three subsets: approximately 14,000 images for training,
+3,000 images for testing, and 7,000 images for prediction tasks.
+Each subset is provided as a separated zipped file through Kaggle.
 
+The primary object of this dataset is to support participants
+in developing and evaluating image classification models.
+By providing a diverse and well-labeled collection of scenes,t
+he dataset encourages the advancement of robust classification algorithmsc
+apable of distinguishing objects in various environments with reasonable accuracy.
 
-\subsection{Quantization}
+\subsection{Model Architecture}
+\label{sec:method:model_architecture}
+
+In this section, the architecture of the teacher model is described.
+We implemented a custom \gls*{cnn} model, including the residual block \cite{he2016deep},
+hierarchically extract and aggregate spatial features from the input images,
+before mapping them to one of six scene categories.
+
+The model is consisted of 12 residual blocks,
+progressively increasing the channel capacity while reducing spatial resolution,
+and a fully connected layer at the end as a classifier
+which regularly decreases the number from 1024, 512, 256, 64, and 6.
+In total, 26,534,358 parameters are in the model.
+
+All operations in the model are performed using floating point 32,
+which is the default precision in PyTorch \cite{paszke2019pytorch}
+in the most GPUs.
+
+\subsection{Weight Reduction}
+\label{sec:method:weight_reduction}
+
+From the teacher model,
+the number of residual blocks and the layers of the classifier are reduced.
+In the perspective of weight reduction,
+four reduction models are created, excluding the teacher model,
+which are 10, 8, 6, and 4 residual blocks
+and (512, 256, 64, 16), (256, 64, 16), (128, 64, 16), and (64, 32) layers of the classifiers.
+The number of parameters in the models are 6,601,686, 1,648,470, 408,854, and 98,294 respectively.
+
+\subsection{Precision Quantization}
+\label{sec:method:precision_quantization}
+
+The quantization is utilized in both model weights and floating point operations.
+Two different levels of precision, floating point 16 and 8, are used.
+To implement the quantization,
+\texttt{torch.set\_default\_dtype()} and the \texttt{bnb}~\cite{bitsandbytes} python framework
+are used.

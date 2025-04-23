@@ -1,9 +1,49 @@
 \section{Related Works}
 
-\subsection{Image Inpainting} 
+In this section, the paper reviews the performance optimization
+in the image classification task via three approaches:
+\textit{\ref{sec:rw:lightweight_backbones} lightweight backbones},
+\textit{\ref{sec:rw:knowledge_distillation} knowledge distillation},
+and \textit{\ref{sec:rw:quantization} quantization}.
+The first approach focuses on the design of efficient architectures,
+the second approach emphasizes the transfer of knowledge from a larger model to a smaller one,
+and the third approach discusses the quantization of models,
+which is a common technique used to reduce the size of models
+and improve their performance on low-compute devices.
 
-\subsection{Diffusion Models}
+\subsection{Lightweight Backbones}
+\label{sec:rw:lightweight_backbones}
 
-% \subsection{Knowledge Distillation}
+Early breakthroughs in large-scale image classification were driven by deeper and wider \gls*{cnn}
+such as AlexNet, VGG, Inception and ResNet \cite{krizhevsky2012imagenet, simonyan2014very, szegedy2015going, he2016deep}.
+While these architectures steadily improved top-1 accuracy on ImageNet \cite{deng2009imagenet},
+their memory footprint and compute cost grew proportionally,
+prompting a parallel line of research on efficiency-focus approaches.
+Lightweight backbones such as MobileNet \cite{howard2017mobilenets,sandler2018mobilenetv2},
+EfficientNet \cite{tan2019efficientnet}, and Data-efficient Vision Transformer (DeiT) \cite{touvron2021training},
+demonstrated that accuracy can be retained with careful depth-width scaling or attention re-use.
+Nevertheless, these models still requires their heavy weights when trained from scratch.
 
-% \subsection{Quantization}
+\subsection{Knowledge distilation}
+\label{sec:rw:knowledge_distillation}
+
+Knowledge distilation is a technique used to transfer knowledge
+from a large complex model to a smaller, more efficient model,
+enabling deployment on resource-constrained devices without significant loss of performance.
+Hinton et al. \cite{hinton2015distilling} introduced logit-matching between a cumbersome teacher and a compact student.
+Subsequent works enriched the tranfer signal by aligning intermediate feature maps \cite{romero2014fitnets}
+or the spatial attention of convolutional layers \cite{zagoruyko2016paying}.
+The latter approach, self-distillation \cite{zhang2019your},
+was shown to be effective in improving the performance of a single model
+by training it with the same architecture.
+
+\subsection{Quantization}
+\label{sec:rw:quantization}
+
+Quantization techniques are highly regarded recently for their ability
+to allow \gls*{llm} to run on low-compute devices.
+Especially, Microsoft \footnote{https://www.microsoft.com/en-us/} has pioneered the quantization of \gls*{llm}
+with their \gls*{llm} Phi-3 \cite{microsoft_phi3} and Phi-4 \cite{microsoft_phi4} models,
+as well as the 1-bit quantized model, BitNet \cite{microsoft_bitnet}.
+Those floating-point quantization techniques can also be applied to image classification task,
+enabling the deployment of large models on low-compute devices.
