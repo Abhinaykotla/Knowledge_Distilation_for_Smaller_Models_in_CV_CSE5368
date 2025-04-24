@@ -4,8 +4,8 @@
 
 Several student models are configured based on the teacher model in \ref{sec:method:model_architecture}, applying the reduction and quantization techniques
 introduced in \ref{sec:method:weight_reduction} and \ref{sec:method:precision_quantization}.
-All training are conducted on a single NVIDIA GeForce RTX 4070 Laptop GPU.
-The PyTorch \cite{paszke2019pytorch} framework founds the basis of the implementation,
+All training processes are conducted on a single NVIDIA GeForce RTX 4070 Laptop GPU.
+The PyTorch \cite{paszke2019pytorch} framework forms the basis of the implementation,
 leveraging its extensive libraries and tools for deep learning.
 Adam optimizer \cite{kingma2014adam} is employed with a learning rate of 0.001.
 A mini-batch size of 224 is used as well as the KL Divergence is utilized as the loss function,
@@ -19,22 +19,20 @@ The performance of the teacher model is on the table \ref{tab:teacher_model}.
 The table \ref{tab:weight_reduction} shows the performance of the student models
 along with reducing the number of parameters in the models.
 Furthermore, the table \ref{tab:precision_quantization} presents the performance
-along with the quantization of the model weights and floating point operations.
+along with the quantization of the model weights and floating-point operations.
 
 \begin{table}[ht]
 \centering
 \caption{Teacher Model Performance}
 \label{tab:teacher_model}
-\begin{tabular}{|c|c|}
-    \hline
+\begin{tabular}{c|c}
+    \noalign{\hrule height 1pt}
                             & \textit{Teacher model} \\
     \hline
     the number of parameters & 26,534,358 \\
-    \hline
     accuracy                & 85.77\% \\
-    \hline
     training time per epoch (secs) & 72.32 \\
-    \hline
+    \noalign{\hrule height 1pt}
 \end{tabular}
 \end{table}
 
@@ -42,52 +40,44 @@ along with the quantization of the model weights and floating point operations.
 \centering
 \caption{Weight Reduction Comparison}
 \label{tab:weight_reduction}
-\begin{tabular}{|c|c|}
-    \hline
+\begin{tabular}{c|c}
+    \noalign{\hrule height 1pt}
                             & \textit{10 blocks, (512, 256, 64, 16)} \\
     \hline
     the number of parameters & 6,601,686 \\
-    \hline
     accuracy                & 83.23\% \\
-    \hline
     training time per epoch (secs) & 68.6 \\
-    \hline
+    \noalign{\hrule height 1pt}
 \end{tabular}
 \\[10pt]
-\begin{tabular}{|c|c|}
-    \hline
+\begin{tabular}{c|c}
+    \noalign{\hrule height 1pt}
                             & \textit{8 blocks, (256, 64, 16)} \\
     \hline
     the number of parameters & 1,648,470 \\
-    \hline
     accuracy                & \textbf{86.43\%} \\
-    \hline
     training time per epoch (secs) & 67.0 \\
-    \hline
+    \noalign{\hrule height 1pt}
 \end{tabular}
 \\[10pt]
-\begin{tabular}{|c|c|}
-    \hline
+\begin{tabular}{c|c}
+    \noalign{\hrule height 1pt}
                             & \textit{6 blocks, (128, 64, 16)} \\
     \hline
     the number of parameters & 408,854 \\
-    \hline
     accuracy                & 85.77\% \\
-    \hline
     training time per epoch (secs) & 66.7 \\
-    \hline
+    \noalign{\hrule height 1pt}
 \end{tabular}
 \\[10pt]
-\begin{tabular}{|c|c|}
-    \hline
+\begin{tabular}{c|c}
+    \noalign{\hrule height 1pt}
                             & \textit{4 blocks, (64, 32)} \\
     \hline
     the number of parameters & 98,294 \\
-    \hline
     accuracy                & 84.57\% \\
-    \hline
     training time per epoch (secs) & \textbf{64.7} \\
-    \hline
+    \noalign{\hrule height 1pt}
 \end{tabular}
 \end{table}
 
@@ -95,38 +85,40 @@ along with the quantization of the model weights and floating point operations.
 \centering
 \caption{Precision Quantization on Teacher Model}
 \label{tab:precision_quantization}
-\begin{tabular}{|c|c|c|}
-\hline
+\begin{tabular}{c|cc}
+    \noalign{\hrule height 1pt}
                           & \textit{fp16}           & \textit{fp8}     \\ \hline
-accuracy                  & 85.54\%                 & \textbf{86.38\%}    \\ \hline
-training time per epoch (secs) & \textbf{61.3}            & 70.5      \\ \hline
+accuracy                  & 85.54\%                 & \textbf{86.38\%}    \\
+training time per epoch (secs) & \textbf{61.3}            & 70.5      \\
+\noalign{\hrule height 1pt}
 \end{tabular}
 \end{table}
 
-Corresponding to the common senses,
+Corresponding to the common sense,
 the training time per epoch is reduced as the number of parameters in the model is reduced.
 The smallest number of the student model shows
 the fastest training time per epoch 64.7 seconds.
 Also, another that the performance is not proportional to the number of parameters in the model
 when it comes to the fixed dataset and the architecture of the model is observed,
-highlighted by the 8 blocks student model which shows the best performance.
+highlighted by the 8-block student model, which shows the best performance.
 
 \begin{table}[ht]
 \centering
 \caption{Precision Quantization on 8 blocks}
 \label{tab:quantization_8_blocks}
-\begin{tabular}{|c|c|c|}
-\hline
+\begin{tabular}{c|cc}
+    \noalign{\hrule height 1pt}
                         & \textit{fp16}    & \textit{fp8}    \\ \hline
-accuracy              & \textbf{87.00\%} & 86.07\% \\ \hline
-training time per epoch (secs) & \textbf{60.8}    & 69.0   \\ \hline
+accuracy              & \textbf{87.00\%} & 86.07\% \\
+training time per epoch (secs) & \textbf{60.8}    & 69.0   \\
+\noalign{\hrule height 1pt}
 \end{tabular}
 \end{table}
 
 With the best performance model,
 an experiment that applies the precision quantization is conducted.
 The result in Table~\ref{tab:quantization_8_blocks} demonstrates that
-the 8 blocks student model benefits from fp16 precision.
+the 8-block student model benefits from fp16 precision.
 With an accuracy of 87.00\% and the fastest training time per epoch of 60.8 seconds,
 fp16 quantization outperforms fp8,
 which achieves 86.07\% accuracy with a slower training time of 69.0 seconds.

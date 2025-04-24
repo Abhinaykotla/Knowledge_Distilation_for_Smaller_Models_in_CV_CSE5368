@@ -1,10 +1,10 @@
 \section{Introduction}
 
 Deep neural networks have achieved remarkable success across a wide spectrum of computer vision problems,
-from large-scale image classification, ImageNet \cite{deng2009imagenet} for example, to high-fidelity image generation with diffusion \cite{ho2020denoising, rombach2022high, xia2023diffir} and \gls*{gan} models \cite{goodfellow2014generative, nazeri2019edgeconnect}.
-Much of this progress, however, has been powered by ever-lager model capacities-
+from a simple image classification task, ImageNet \cite{deng2009imagenet} for example, to high-fidelity image generation with diffusion \cite{ho2020denoising, rombach2022high, xia2023diffir} and \gls*{gan} models \cite{goodfellow2014generative, nazeri2019edgeconnect}.
+Much of this progress, however, has been powered by ever-larger model capacities;
 billions of parameters, expansive training datasets, and considerable computational budgets,
-even though such computational expensive models deliver state-of-the-art performance.
+even though such computationally expensive models deliver state-of-the-art performance.
 Their computational-intensive nature poses serious obstacles for deploying them
 on resource-constrained devices and real-time and latency-sensitive backend services
 such as smartphones or even low-end GPUs.
@@ -17,8 +17,8 @@ are successfully built on top of image classification
 since AlexNet \cite{krizhevsky2012imagenet} overwhelmed the traditional methods
 in computer vision with its deep learning-based approach.
 
-In this project, we firstly planned to implement a knowledge distillation framework
-for image inpainting task with diffusion models
+In this project, the initial plan was to implement a knowledge distillation framework
+for an image inpainting task with diffusion models
 which restores images from masked regions.
 Unfortunately, however, while training scripts for student models were successfully implemented and run with the guidance of the teacher model from DiffIR \cite{xia2023diffir},
 not only the problem of the memory but also the problem of the computing operations
@@ -30,5 +30,7 @@ to demonstrate the effectiveness of knowledge distillation
 and to further the foundation of the framework to apply the technique in the future.
 
 Based on our code implemented in Assignment 2 of the course, CSE 5368,
-we built a knowledge distillation framework for image classification task.
-In the subsequent sections, the paper describes our knowledge distillation method, present experimental results demonstrating its efficiency, and discuss potential directions for future work.
+we built a knowledge distillation framework for the image classification task.
+In the subsequent sections, the paper describes our knowledge distillation method,
+presents experimental results demonstrating its efficiency,
+and discusses potential directions for future work.
