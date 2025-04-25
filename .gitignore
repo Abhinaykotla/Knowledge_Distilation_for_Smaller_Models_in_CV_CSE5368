@@ -1,8 +1,13 @@
 *.zip
-
 venv/
-.ipynb_checkpoints/
-*.pth
+data/intel-image-classification
 *.jpg
 *.pyc
-*.pth
+*.pkl
+*.tar.gz
+*.tar
+*.gz
+tempCodeRunnerFile.py
+*32*.pth
+*12*.pth
+/checkpoints/res12*/*model.pth

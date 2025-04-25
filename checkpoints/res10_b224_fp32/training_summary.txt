@@ -1,0 +1,12 @@
+Model Architecture: ModularCNN
+Residual Blocks: 10
+Fully Connected Layers: [512, 256, 64, 16]
+Trainable Parameters: 6,601,686
+Training Time: 480.24 seconds
+Hardware Used: NVIDIA GeForce RTX 4070 Laptop GPU
+Batch Size: 224
+Learning Rate: 0.001
+Epochs: 15
+Best Test Accuracy: 83.23%
+Early Stopping: Yes
+Stopped at epoch: 7/15
