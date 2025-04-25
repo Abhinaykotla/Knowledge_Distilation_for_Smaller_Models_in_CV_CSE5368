@@ -1,36 +1,37 @@
 \section{Introduction}
 
 Deep neural networks have achieved remarkable success across a wide spectrum of computer vision problems,
-from a simple image classification task, ImageNet \cite{deng2009imagenet} for example, to high-fidelity image generation with diffusion \cite{ho2020denoising, rombach2022high, xia2023diffir} and \gls*{gan} models \cite{goodfellow2014generative, nazeri2019edgeconnect}.
-Much of this progress, however, has been powered by ever-larger model capacities;
-billions of parameters, expansive training datasets, and considerable computational budgets,
+ranging from simple image classification tasks, such as ImageNet \cite{deng2009imagenet},
+to high-fidelity image generation using diffusion models \cite{ho2020denoising, rombach2022high, xia2023diffir} and \gls*{gan} models \cite{goodfellow2014generative, nazeri2019edgeconnect}.
+Much of this progress, however, has been driven by increasingly larger model capacities:
+billions of parameters, expansive training datasets, and considerable computational budgets —
 even though such computationally expensive models deliver state-of-the-art performance.
-Their computational-intensive nature poses serious obstacles for deploying them
-on resource-constrained devices and real-time and latency-sensitive backend services
+Their intensive resource requirements pose serious obstacles to deploying them
+on resource-constrained devices or in real-time and latency-sensitive back-end services,
 such as smartphones or even low-end GPUs.
-Closing this gap between accuracy and efficiency therefore becomes one of central research questions in deep learning.
+Closing the gap between accuracy and efficiency therefore remains one of the central research challenges in deep learning.
 
-Image classification is a basic and fundamental task in computer vision.
-It is the task of predicting the class of an image from a set of classes.
-Many other tasks like object detection, image segmentation, and image generation
-are successfully built on top of image classification
-since AlexNet \cite{krizhevsky2012imagenet} overwhelmed the traditional methods
-in computer vision with its deep learning-based approach.
+Image classification is a fundamental task in computer vision.
+The goal is to predict the class of an image from a predefined set of categories.
+Many other tasks, including object detection, image segmentation, and image generation,
+are successfully built on top of image classification,
+especially since AlexNet \cite{krizhevsky2012imagenet} revolutionized computer vision by outperforming traditional methods
+with its deep learning-based approach.
 
 In this project, the initial plan was to implement a knowledge distillation framework
-for an image inpainting task with diffusion models
-which restores images from masked regions.
-Unfortunately, however, while training scripts for student models were successfully implemented and run with the guidance of the teacher model from DiffIR \cite{xia2023diffir},
-not only the problem of the memory but also the problem of the computing operations
-led the training time to be extremely long.
-More than 200 hours were required per epoch for training on the Places dataset \cite{zhou2017places} with our student model from DiffIR,
-even if it operated on 8-bit floating point.
-Therefore, we decided to change the task from image inpainting to image classification
-to demonstrate the effectiveness of knowledge distillation
-and to further the foundation of the framework to apply the technique in the future.
+for an image inpainting task using diffusion models,
+aiming to restore masked regions of images.
+Unfortunately, although training scripts for student models were successfully implemented and run with guidance from the teacher model DiffIR \cite{xia2023diffir},
+both memory limitations and the computational burden
+led to extremely long training times.
+Training on the Places dataset \cite{zhou2017places} required more than 200 hours per epoch,
+even when using 8-bit floating-point precision.
+Given these constraints, we decided to pivot from image inpainting to image classification
+in order to demonstrate the effectiveness of knowledge distillation
+and to lay the groundwork for applying the technique to more complex tasks in the future.
 
-Based on our code implemented in Assignment 2 of the course, CSE 5368,
-we built a knowledge distillation framework for the image classification task.
-In the subsequent sections, the paper describes our knowledge distillation method,
-presents experimental results demonstrating its efficiency,
-and discusses potential directions for future work.
+Building on the code implemented in Assignment 2 of the CSE 5368 course,
+we developed a knowledge distillation framework for the image classification task.
+In the subsequent sections, we describe our knowledge distillation method,
+present experimental results demonstrating its efficiency,
+and discuss potential directions for future work.
