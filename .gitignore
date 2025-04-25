@@ -1,3 +1,18 @@
+*.zip
+venv/
+data/intel-image-classification
+*.jpg
+*.pyc
+*.pkl
+*.tar.gz
+*.tar
+*.gz
+tempCodeRunnerFile.py
+*32*.pth
+*12*.pth
+/checkpoints/res12*/*model.pth
+
+
 *.aux
 *.fdb_latexmk
 *.fls
@@ -11,6 +26,5 @@
 *.acn
 *.glo
 *.ist
-*.pth
 *.zip
 *.glsdefs
