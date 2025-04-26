@@ -27,6 +27,13 @@ capable of distinguishing objects in various environments with reasonable accura
 \subsection{Model Architecture}
 \label{sec:method:model_architecture}
 
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{assets/model-architecture.png}
+    \caption{Custom CNN model Architecture}
+    \label{fig:model_architecture}
+\end{figure}
+
 In this section, we describe the architecture of the teacher model.
 We implemented a custom \gls*{cnn} model, incorporating residual blocks \cite{he2016deep},
 which hierarchically extract and aggregate spatial features from the input images
