@@ -12,7 +12,20 @@ The Adam optimizer \cite{kingma2014adam} was employed with a learning rate of 0.
 A mini-batch size of 224 was used, and KL Divergence was utilized as the loss function,
 effectively measuring the difference
 between the distributions predicted by the teacher and those output by the student models.
-Early stopping was applied with a patience of 3 epochs to prevent overfitting.
+Specifically, the the loss quantifies how well the student model mimics the teacher model's output distribution,
+minimized when the student model closely approximates the teacher model's output distribution.
+The following formulations shows the KL Divergence,
+
+\begin{equation}
+    \mathrm{KL}\bigl(P\;\|\;Q\bigr)
+    = \sum_{c=1}^{C} P(c\!\mid\!x)\,
+        \log\frac{P(c\!\mid\!x)}
+                 {Q(c\!\mid\!x)}\,,
+\label{eq:kl_divergence}
+\end{equation}
+
+where $P$ is the teacher's distribution and $Q$ is the student's distribution. Early stopping was applied with a patience of 3 epochs to prevent overfitting.
+
 
 \subsection{Evaluation}
 

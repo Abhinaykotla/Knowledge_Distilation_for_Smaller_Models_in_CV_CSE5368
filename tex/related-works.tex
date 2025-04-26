@@ -30,6 +30,9 @@ Nevertheless, these models still require substantial training resources when tra
 Knowledge distillation is a technique used to transfer knowledge
 from a large, complex model to a smaller, more efficient model,
 enabling deployment on resource-constrained devices without significant performance loss.
+Among several aspects of knowledge distillation,
+the paper specifically focuses on the mimicry between the teacher and student models,
+which enables the small model to follow the teacher's probability distribution.
 Hinton et al. \cite{hinton2015distilling} introduced logit-matching between a cumbersome teacher and a compact student.
 Subsequent works enriched the transfer signal by aligning intermediate feature maps \cite{romero2014fitnets}
 or the spatial attention of convolutional layers \cite{zagoruyko2016paying}.
