@@ -8,17 +8,34 @@ The implementation is based on the **Intel Image Classification Dataset** and ut
 
 ## Project Structure
 ```
-.
-├── config.py                  # Configuration file for paths, hyperparameters
-├── cnn_model.py                # Modular student CNN architectures
-├── teacher_arch.py             # Teacher model architecture
-├── blocks.py                   # Residual block definitions
-├── dataset.py                  # Dataset loader for Intel Image Dataset
-├── train.py                    # Training script (single model)
-├── train_utils.py              # Training and evaluation utilities
-├── run_experiments.py          # Run multiple experiments (weight reduction, precision quantization)
-├── checkpoints/                # Folder for saving models, histories, and summaries
-└── README.md                   # (you are here)
+C:.
+│   .gitignore
+│   config.py
+│   evaluate.py
+│   plot_experiment_results.py
+│   README.md
+│   requirements.txt
+│   run_experiments.py
+│   teacher_model.ipynb
+│   train.py
+│
+├───checkpoints
+│
+├───data
+│   │   dataset.py
+│   │
+│   └───intel-image-classification
+├───Final Paper
+│   └───tex
+│
+├───models
+│       blocks.py
+│       cnn_model.py
+│       teacher_arch.py
+│
+└───utils
+        train_utils.py
+        visualization.py
 ```
 
 ## Setup Instructions
