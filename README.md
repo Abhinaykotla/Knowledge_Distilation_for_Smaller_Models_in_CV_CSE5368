@@ -8,7 +8,7 @@ The implementation is based on the **Intel Image Classification Dataset** and ut
 
 ## Project Structure
 ```
-C:.
+Knowledge_Distilation_for_Smaller_Models_in_CV_CSE5368
 │   .gitignore
 │   config.py
 │   evaluate.py
